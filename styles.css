@@ -1,0 +1,34 @@
+.btn {
+	border-radius: 0px;
+	padding-bottom: 5px;
+}
+
+.container {
+	margin-bottom: 5px;
+}
+
+
+.btn-money {
+	font-size: 3em;
+	color: yellow;	
+	width:4em;
+	height:3em;
+}
+
+
+.btn-category {
+	font-size: 1em;
+	color:white;
+	width: 12em;
+	height: 7.5em;
+	background-color: #337ab7;
+	white-space:normal !important;
+	word-wrap: break-word;
+	padding-right:30px;
+	padding-left:30px;
+}
+
+.categories-container {
+	margin-bottom: 1em;
+}
+

@@ -3,32 +3,56 @@
 	padding-bottom: 5px;
 }
 
-.container {
-	margin-bottom: 5px;
+.clues-container {
+	margin-bottom: 0.5em;
 }
 
 
 .btn-money {
-	font-size: 3em;
+	font-size: 2em;
 	color: yellow;	
-	width:4em;
-	height:3em;
+	width:3.5em;
+	height:2.5em;
+	margin-bottom:0.2em;
+	margin-right:0em;
 }
+
 
 
 .btn-category {
 	font-size: 1em;
+	line-height:100%;
 	color:white;
-	width: 12em;
-	height: 7.5em;
+	width: 7em;
+	height: 5em;
 	background-color: #337ab7;
 	white-space:normal !important;
 	word-wrap: break-word;
-	padding-right:30px;
-	padding-left:30px;
+	margin-bottom:0.2em;
+	margin-right:0em;
+	padding: 1px;
 }
 
-.categories-container {
+.categories{
 	margin-bottom: 1em;
 }
 
+
+
+
+.selected {
+	background-color: red;
+}
+
+.right-side {
+	float: right;
+}
+
+.main {
+	padding-left:0px;
+}
+
+.square-column {
+	width:100px;
+	margin-right:10px;
+}

@@ -46,9 +46,6 @@
 	background-color: red;
 }
 
-.right-side {
-	float: right;
-}
 
 .square-column {
 	font-size: 1em;
@@ -66,11 +63,22 @@
 }
 
 .clue-screen {
+	color: white;
 	background-color:gray;
-	border-right: 4px solid;
-	border-left: 2px solid;
-	border-bottom: 4px solid;
+	border-right: 4px solid black;
+	border-left: 2px solid black;
+	border-bottom: 4px solid black;
 	height: 466px;
+}
+
+.player-box {
+	text-align: center;
+	color: white;
+	background-color: black;
+}
+
+.name {
+	text-align: center;
 }
 
 p {

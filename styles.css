@@ -15,12 +15,15 @@
 	height:2.5em;
 	margin-bottom:0.2em;
 	margin-right:0em;
+	margin-left: 0.5em;
+	border: 2px solid black;
 }
 
 
 
 .btn-category {
 	font-size: 1em;
+	font-weight: bold;
 	line-height:100%;
 	color:white;
 	width: 7em;
@@ -28,9 +31,11 @@
 	background-color: #337ab7;
 	white-space:normal !important;
 	word-wrap: break-word;
-	margin-bottom:0.2em;
-	margin-right:0em;
-	padding: 1px;
+	margin-bottom:1em;
+	margin-right: 0.8em;
+	margin-left: 1em;
+	padding: 0px;
+	border: 2px solid black;
 }
 
 .categories{
@@ -45,11 +50,31 @@
 	float: right;
 }
 
-.main {
-	padding-left:0px;
+.square-column {
+	font-size: 1em;
+	width:100px;
+	margin-right:0.8em;
+	padding:0em;
 }
 
-.square-column {
-	width:100px;
-	margin-right:10px;
+.game-board {
+	margin: 0 auto;
+	background-color: gray;
+	border-right: 2px solid;
+	border-left: 4px solid;
+	border-bottom: 4px solid;
+}
+
+.clue-screen {
+	background-color:gray;
+	border-right: 4px solid;
+	border-left: 2px solid;
+	border-bottom: 4px solid;
+	height: 466px;
+}
+
+p {
+	font-size:0.8em;
+	font-weight: normal;
+	font-style: italic;
 }

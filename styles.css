@@ -74,11 +74,17 @@
 .player-box {
 	text-align: center;
 	color: white;
-	background-color: black;
+	background-color: #337ab7;
+	padding: 0px;
 }
 
 .name {
 	text-align: center;
+}
+
+.money {
+	text-align:center;
+	font-size: 1.5em;
 }
 
 p {

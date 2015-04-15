@@ -96,3 +96,7 @@ p {
 	font-weight: normal;
 	font-style: italic;
 }
+
+hr {
+	border: 2px solid black;
+}

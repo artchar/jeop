@@ -91,6 +91,20 @@
 	border-top: 2px solid black;
 }
 
+.clue-box {
+	white-space:normal !important;
+	word-wrap: break-word;
+	background-color: #337ab7;
+	font-size: 1.5em;
+	color: white;
+	text-align: center;
+	width: 24em;
+	height: 16em;
+	vertical-align: middle;
+	display: table-cell;
+}
+
+
 p {
 	font-size:0.8em;
 	font-weight: normal;
@@ -99,4 +113,3 @@ p {
 
 hr {
 	border: 2px solid black;
-}

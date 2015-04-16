@@ -113,3 +113,8 @@ p {
 
 hr {
 	border: 2px solid black;
+}
+
+input {
+	text-align:center;
+}

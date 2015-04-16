@@ -51,4 +51,14 @@ if (Meteor.server) {
 			"hey"
 		]
 	});
+		Clues.insert({
+		category: "sss",
+		clues: [
+			"the capital of dick mofuckaaaa",
+			"shit boss bro",
+			"stop",
+			"sexxx",
+			"hey"
+		]
+	});
 }

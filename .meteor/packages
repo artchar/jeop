@@ -10,5 +10,4 @@ iron:router
 gwendall:session-json
 insecure
 autopublish
-u2622:persistent-session
-accounts-base
+accounts-password

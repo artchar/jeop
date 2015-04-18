@@ -1,64 +1,74 @@
 <template name="rooms">
 
-<div class="container ss">
-	<div class="jumbotron">
-		<h2 class="welcome">Welcome {{username}}!</h2>
-		<p><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#createRoom">Create Room</button></p>
+{{#if currentUser}}
+	<div class="container ss">
+		<div class="jumbotron">
+			<h2 class="welcome">Welcome {{username}}!</h2>
 
-		<div id="createRoom" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title">Create Room</h4>
+			<p><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#createRoom">Create Room</button>
+			<button type="button" class="btn btn-info btn-lg" id="signOut">Sign Out</button></p>
+
+			<div id="createRoom" class="modal fade">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Create Room</h4>
+						</div>
+						<form id="roomInfo">
+							<div class="modal-body">
+								<p>Room name</p>
+								<input type="text" class="form-control" name="roomName" id="roomName">
+								<p>Room password (leave blank for no password)</p>
+								<input type="text" class="form-control" name="roomPassword" id="roomPassword">
+							</div>
+							<div class="modal-footer">
+								<button type ="submit" class="btn btn-default" id="confirm">Create</button>
+								<button type ="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</form>
 					</div>
-					<div class="modal-body">
-						<p>Room name</p>
-						<input type="text" class="form-control" id="roomName">
-						<p>Room password (leave blank for no password)</p>
-						<input type="text" class="form-control" id="roomName">
+				</div>
+			</div>
+
+			<div class="panel panel-primary">
+				<div class="panel-heading room-heading">
+					<div class="row">
+						<div class="col-md-6">
+							<h3>Room Name</h3>
+						</div>
+						<div class="col-md-4">
+							<h3>Owner</h3>
+						</div>
+						<div class="col-md-2">
+							<h3>Players</h3>
+						</div>
 					</div>
-					<div class="modal-footer">
-						<button type ="button" class="btn btn-default" id="confirm">Create</button>
-						<button type ="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+				</div>
+				<div class="panel-body room-panel">
+				{{#each roomsList}}
+					<div class="row room-row">
+						<div class="col-md-6 room-entry">
+							<p>{{roomName}}</p>
+						</div>
+						<div class="col-md-4 room-entry">
+							<p>{{roomOwner}}</p>
+						</div>
+						<div class="col-md-2 room-entry">
+							<p>{{roomplayers}}/6</p>
+						</div>
 					</div>
+				{{/each}}
+
 				</div>
 			</div>
 		</div>
 
-		<div class="panel panel-primary">
-			<div class="panel-heading room-heading">
-				<div class="row">
-					<div class="col-md-6">
-						<h3>Room Name</h3>
-					</div>
-					<div class="col-md-4">
-						<h3>Owner</h3>
-					</div>
-					<div class="col-md-2">
-						<h3>Players</h3>
-					</div>
-				</div>
-
-			</div>
-			<div class="panel-body room-panel">
-			{{#each roomsList}}
-				<div class="row room-row">
-					<div class="col-md-6 room-entry">
-						<p>asdf</p>
-					</div>
-					<div class="col-md-4 room-entry">
-						<p>{{roomowner}}</p>
-					</div>
-					<div class="col-md-2 room-entry">
-						<p>{{roomplayers}}/6</p>
-					</div>
-				</div>
-			{{/each}}
-
-			</div>
-		</div>
 	</div>
 
-</div>
+{{else}}
+	{{redir}}
+	
+{{/if}}
 
 </template>

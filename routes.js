@@ -1,6 +1,6 @@
-Router.map(function() {
 
-	this.route('home', {path: '/'});
+Router.route("home", {path: "/"});
 
-	this.route('rooms', {path: '/rooms'});
-});
+Router.route("rooms", {path: "/rooms"});
+
+Router.route("rooms/:_id");

@@ -1,9 +1,9 @@
 Meteor.methods({
-	addRoom:function(ownerId, roomName, password) {
+	addRoom:function(roomOwner, roomName, roomPassword) {
 		var roomId = Rooms.insert({
-			ownerId: ownerId,
+			roomOwner: roomOwner,
 			roomName: roomName,
-			password: password
+			roomPassword: roomPassword
 		});
 	}
 });

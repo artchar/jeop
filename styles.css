@@ -104,17 +104,46 @@
 	display: table-cell;
 }
 
+.ss {
+	margin-top: 50px;
+}
 
-p {
-	font-size:0.8em;
-	font-weight: normal;
-	font-style: italic;
+.room-heading {
+	border-bottom: 3px solid black;
+}
+
+.room-row {
+	border-bottom: 1px solid #337ab7;
+}
+.room-row:hover {
+	background-color: #335cd7;
+	color: white;
+	cursor: pointer;
+}
+
+.room-entry {
+	border-right: 1px solid #337ab7;
+}
+
+.room-panel {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	overflow: auto;
+	height: 30em;
+	width: 100%;
+}
+
+.jumbotron-center {
+	position:absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.welcome {
+	margin-bottom: 1.5em;
 }
 
 hr {
 	border: 2px solid black;
-}
-
-input {
-	text-align:center;
 }

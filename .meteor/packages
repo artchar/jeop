@@ -11,3 +11,4 @@ gwendall:session-json
 insecure
 autopublish
 accounts-password
+accounts-ui

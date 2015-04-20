@@ -8,9 +8,9 @@
 
 <div class="container main">
 	<div class="row">
-		{{> board}}
+		{{> yield "board"}}
 
-		{{> cluescreen}}
+		{{> yield "cluescreen"}}
 	</div>
 </div>
 
@@ -19,7 +19,7 @@
 </div>
 
 <div class="container">
-		{{> players}}
+		{{> yield "players"}}
 	
 </div>
 

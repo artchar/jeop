@@ -26,12 +26,9 @@ Template.rooms.events({
 		$("#roomName").val("");
 		$("#roomPassword").val("");
 		Meteor.call("addRoom", owner, roomName, roomPassword, Meteor.userId());
-
 		var gameid = Rooms.findOne({activePlayer: id})._id;
 
-		Meteor.setTimeout(function() {
-			Router.go("/rooms/" + gameid);
-		}, 1000);
+		Router.go("/rooms/" + gameid);
 	},
 
 	"click #signOut": function(event) {
@@ -42,6 +39,9 @@ Template.rooms.events({
 	"click .room-row": function (event, template) {
 		event.preventDefault();
 		var gameid = event.currentTarget.id;
+		var playerid = Meteor.userId();
+		var playerName = Meteor.user().username;
+		Meteor.call("joinRoom", playerid, playerName, gameid);
 		Router.go("/rooms/" + gameid);
 	}
 

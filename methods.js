@@ -46,6 +46,7 @@ Meteor.methods({
 			roomName: roomName,
 			roomPassword: roomPassword,
 			clues: clueArray,
+			roomplayers: 1,
 
 			players: [{
 				player: roomOwner,
@@ -61,7 +62,14 @@ Meteor.methods({
 		});
 	},
 
-	getGameId: function() {
+	joinRoom: function(playerid, playerName, gameid) {
+		Rooms.update({_id: gameid},
+			{$inc: {roomplayers: 1},
+			 $push: {players: {
+			 	player: playerName,
+			 	money: 0,
+			 	playerid: playerid
+			 }}});
 
 	}
 });

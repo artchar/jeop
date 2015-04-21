@@ -8,7 +8,5 @@ meteor-platform
 twbs:bootstrap
 iron:router
 gwendall:session-json
-insecure
-autopublish
 accounts-password
 accounts-ui

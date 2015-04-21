@@ -43,6 +43,7 @@ Meteor.methods({
 
 		var roomId = Rooms.insert({
 			roomOwner: roomOwner,
+			ownerId: playerid,
 			roomName: roomName,
 			roomPassword: roomPassword,
 			clues: clueArray,
@@ -56,10 +57,13 @@ Meteor.methods({
 
 			activeClue: "",
 
-			activePlayer: playerid
+			activePlayer: playerid,
+
+			currentState: 0
 
 
 		});
+		return roomId;
 	},
 
 	joinRoom: function(playerid, playerName, gameid) {

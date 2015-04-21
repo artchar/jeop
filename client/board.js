@@ -1,9 +1,3 @@
-Template.board.onCreated( function() {
-
-
-
-});
-
 Template.board.helpers({
 	category: function(num) {
 		var d = Math.floor(Math.random() * 5);
@@ -18,6 +12,8 @@ Template.board.helpers({
 
 Template.board.events({
 	'click button': function(event) {
-	
+		event.preventDefault();
+
 	}
 })
+

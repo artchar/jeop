@@ -23,12 +23,17 @@ Template.rooms.events({
 		var roomName = event.target.roomName.value;
 		var roomPassword = event.target.roomPassword.value;
 		var id = Meteor.userId();
+		var gameid;
 		$("#roomName").val("");
 		$("#roomPassword").val("");
-		Meteor.call("addRoom", owner, roomName, roomPassword, Meteor.userId());
-		var gameid = Rooms.findOne({activePlayer: id})._id;
+		Meteor.apply("addRoom", [owner, roomName, roomPassword, Meteor.userId()], true, function(err, result){
+			gameid = result;
+		});
+		Meteor.setTimeout(function() {
+			Router.go("/rooms/" + gameid);
+		}, 2000);
+			
 
-		Router.go("/rooms/" + gameid);
 	},
 
 	"click #signOut": function(event) {

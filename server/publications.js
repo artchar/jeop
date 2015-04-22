@@ -6,6 +6,10 @@ Meteor.publish("rooms", function() {
 	});
 })
 
-Meteor.publish("clues", function() {
-	return Clues.find();
+Meteor.publish("currentRoom", function(id) {
+	return Rooms.find({_id: id}, {
+		fields: {
+			clues: true
+		}
+	});
 })

@@ -49,7 +49,7 @@ Router.route("/rooms/:_id", {
 	},
 
 	waitOn: function() {
-		return Meteor.subscribe("rooms");
+		return Meteor.subscribe("currentRoom", this.params._id);
 	}
 
 

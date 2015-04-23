@@ -15,7 +15,6 @@ Router.route("/rooms/:_id", {
 		this.render("board", {
 			to: "board",
 			data: function() {
-					console.log("found");
 					return {
 						category0: Rooms.findOne({_id: this.params._id}).clues[0].category,
 						category1: Rooms.findOne({_id: this.params._id}).clues[1].category,

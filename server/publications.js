@@ -8,20 +8,34 @@ Meteor.publish("rooms", function() {
 })
 
 Meteor.publish("currentRoom", function(id) {
-	var inGame = false;
 	for (i = 0; i < Rooms.findOne({_id: id}).players.length; i++) {
-		if (this.userId == Rooms.findOne({_id: id}).players[i].playerid){
-			return Rooms.find({_id: id}, {
-			fields: {
-				players: true,
-				activeClue: true,
-				activePlayer: true,
-				"clues.category": true
+		if (this.userId == Rooms.findOne({_id: id}).players[i].playerid) {
+			if (Rooms.findOne({_id: id}).currentState != 0) {
+				return Rooms.find({_id: id}, {
+					fields: {
+						players: true,
+						activeClue: true,
+						activePlayer: true,
+						"clues.category": true,
+						currentState: true,
+						"clues.clues.selected": true
+					}
+				});
 			}
-		});
+			else {
+				return Rooms.find({_id: id}, {
+					fields: {
+						players: true,
+						activeClue: true,
+						activePlayer: true,
+						currentState: true,
+						"clues.clues.selected": true
+					}
+				});
+			}
 		}
 	}
-	return {};
+	return Rooms.find({_id: null});
 	
 		
 })

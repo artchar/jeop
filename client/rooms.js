@@ -29,7 +29,9 @@ Template.rooms.events({
 		Meteor.apply("addRoom", [owner, roomName, roomPassword, Meteor.userId()], true, function(err, result){
 			gameid = result;
 		});
+
 		Meteor.setTimeout(function() {
+			Session.set("currentRoom", gameid);
 			Router.go("/rooms/" + gameid);
 		}, 2000);
 			
@@ -47,6 +49,7 @@ Template.rooms.events({
 		var playerid = Meteor.userId();
 		var playerName = Meteor.user().username;
 		Meteor.call("joinRoom", playerid, playerName, gameid);
+		Session.set("currentRoom", gameid);
 		Router.go("/rooms/" + gameid);
 	}
 

@@ -25,8 +25,6 @@ Meteor.methods({
 		var query = "clues." + cat + "." + "clues." + clue +".selected";
 		var setClue = {};
 		setClue[query] = true;
-		console.log(setClue[query]);
-		console.log("hi");
 		Rooms.update({_id: gameId},
 			{$set: setClue
 		});

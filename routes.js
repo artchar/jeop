@@ -15,7 +15,6 @@ Router.route("/rooms/:_id", {
 		this.render("board", {
 			to: "board",
 			data: function() {
-				console.log(Rooms.findOne({_id: this.params._id}).currentState);
 				if (Rooms.findOne({_id: this.params._id}).currentState != 0) {
 					return {
 						category0: Rooms.findOne({_id: this.params._id}).clues[0].category,

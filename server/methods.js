@@ -1,5 +1,7 @@
 Meteor.methods({
 	addRoom:function(roomOwner, roomName, roomPassword, playerid) {
+
+	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
 		var randoms = [];
 		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
@@ -63,6 +65,11 @@ Meteor.methods({
 
 
 		});
+
+	// Set user's current room to newly created room id
+		Meteor.users.update({_id: this.userId},
+			{$set: {currentRoom: roomId}});
+
 		return roomId;
 	}
 

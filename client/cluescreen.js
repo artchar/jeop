@@ -4,6 +4,20 @@ Template.cluescreen.helpers({
 
 	startButton: function() {
 
+	},
+
+	preGame: function() {
+		if (Rooms.findOne({_id: Session.get("currentRoom")}).currentState == 0)
+			return true;
+		else
+			return false;
+	},
+
+	owner: function() {
+		if (Rooms.findOne({_id: Session.get("currentRoom")}).ownerId == Meteor.userId())
+			return true;
+		else
+			return false;
 	}
 })
 

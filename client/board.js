@@ -1,14 +1,6 @@
 
 
 Template.board.helpers({
-	category: function(num) {
-		var d = Math.floor(Math.random() * 5);
-		if (typeof Clues != undefined) {
-			return Clues.find().fetch()[d].category;
-		}
-		else return "Loading"
-
-	},
 
 	clueHide: function(cat, clue) {
 		if (!Rooms.findOne({_id: Session.get("currentRoom")}).clues[cat].clues[clue].selected) {
@@ -62,3 +54,6 @@ Template.board.events({
 	}
 })
 
+Tracker.autorun(function() {
+	Meteor.subscribe("user");
+})

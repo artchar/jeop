@@ -10,4 +10,3 @@ iron:router
 gwendall:session-json
 accounts-password
 accounts-ui
-insecure

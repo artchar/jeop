@@ -3,7 +3,7 @@
 	<div class="row">
 
 		{{#each playerList}}
-			<div class="col-md-2 player-box">
+			<div class="col-md-2 player-box {{playerAnswering}}">
 				<div class="name">{{this.player}}</div>
 				<div class="money">${{this.money}}</div>
 			</div>

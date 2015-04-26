@@ -1,16 +1,6 @@
 Meteor.methods({
 
 
-	joinRoom: function(playerid, playerName, gameid) {
-		Rooms.update({_id: gameid},
-			{$inc: {roomplayers: 1},
-			 $push: {players: {
-			 	player: playerName,
-			 	money: 0,
-			 	playerid: playerid
-			 }}});
-
-	},
 
 	startGame: function(gameId) {
 		Rooms.update({_id: gameId},

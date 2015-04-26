@@ -16,6 +16,7 @@ Template.home.events({
 				console.log("success");
 			}
 		});
+		Session.set("username", nick);
 		Router.go("rooms");
 	},
 

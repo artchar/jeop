@@ -1,7 +1,7 @@
 Template.rooms.helpers({
 	username: function() {
 		if (Meteor.user() != null)
-			return Meteor.user().username;
+			return Session.get("username");
 	},
 
 	roomsList: function() {
@@ -49,9 +49,11 @@ Template.rooms.events({
 		var playerid = Meteor.userId();
 		var playerName = Meteor.user().username;
 		Meteor.call("joinRoom", playerid, playerName, gameid);
-		Session.set("currentRoom", gameid);
-		Router.go("/rooms/" + gameid);
+		
+		Meteor.setTimeout(function() {
+			Session.set("currentRoom", gameid);
+			Router.go("/rooms/" + gameid);
+		}, 2000);
 	}
-
-
 });
+

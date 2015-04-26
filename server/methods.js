@@ -71,6 +71,21 @@ Meteor.methods({
 			{$set: {currentRoom: roomId}});
 
 		return roomId;
+	},
+
+
+	joinRoom: function(playerid, playerName, gameid) {
+		Rooms.update({_id: gameid},
+			{$inc: {roomplayers: 1},
+			 $push: {players: {
+			 	player: playerName,
+			 	money: 0,
+			 	playerid: playerid
+			 }}});
+
+		Meteor.users.update({_id: this.userId},
+			{$set: {currentRoom: gameid}});
+
 	}
 
 });

@@ -3,7 +3,10 @@
 Template.board.helpers({
 
 	clueHide: function(cat, clue) {
-		if (!Rooms.findOne({_id: Session.get("currentRoom")}).clues[cat].clues[clue].selected) {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 0)
+			return "";
+
+		else if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].clues[clue].selected) {
 			switch (clue) {
 				case 0:
 					return "$400";
@@ -30,10 +33,11 @@ Template.board.helpers({
 	},
 
 	disable: function(cat, clue) {
-		if (Rooms.findOne({_id: Session.get("currentRoom")}).clues[cat].clues[clue].selected)
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].clues[clue].selected)
 			return "disabled";
-		else
-			return "";
+		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 0)
+			return "disabled";
+		else return "";
 	}
 
 

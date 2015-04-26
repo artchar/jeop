@@ -1,5 +1,5 @@
 Meteor.methods({
-	addRoom:function(roomOwner, roomName, roomPassword, playerid) {
+		addRoom:function(roomOwner, roomName, roomPassword, playerid) {
 
 	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
@@ -54,12 +54,15 @@ Meteor.methods({
 			players: [{
 				player: roomOwner,
 				money: 0,
-				playerid: playerid
+				playerid: playerid,
+				readyStatus: true
 			}],
 
 			activeClue: "",
 
 			activePlayer: playerid,
+
+			answeringPlayer: null,
 
 			currentState: 0
 
@@ -73,19 +76,98 @@ Meteor.methods({
 		return roomId;
 	},
 
-
 	joinRoom: function(playerid, playerName, gameid) {
 		Rooms.update({_id: gameid},
 			{$inc: {roomplayers: 1},
 			 $push: {players: {
 			 	player: playerName,
 			 	money: 0,
-			 	playerid: playerid
+			 	playerid: playerid,
+			 	readyStatus: false
 			 }}});
 
 		Meteor.users.update({_id: this.userId},
 			{$set: {currentRoom: gameid}});
 
+	},
+
+
+	// Enter state 1: Current user can  select a clue
+	startGame: function(gameId) {
+		Rooms.update({_id: gameId},
+			{$set: {
+				currentState: 1
+				}
+			});
+
+	},
+
+	// Enter state 2: Show money value on the clue screen
+	clickClue: function(cat, clue, gameId) {
+		// Guard against client clicking buttons from console
+		// if (Rooms.findOne({_id: gameId}).currentState != 1)
+		// 	return;
+		Rooms.update({_id: gameId},
+			{$set: {
+				currentState: 2
+			}
+		});
+		var query = "clues." + cat + "." + "clues." + clue +".selected";
+		var setClue = {};
+		setClue[query] = true;
+
+		Rooms.update({_id: gameId},
+			{$set: setClue
+		});
+
+		// Enter state 3
+		Meteor.setTimeout(function() {
+			Rooms.update({_id: gameId},
+				{$set: {
+					currentState: 3
+				}
+			});
+		}, 4000);
+
+		// Enter state 4
+		Meteor.setTimeout(function() {
+			Rooms.update({_id: gameId},
+				{$set: {
+					currentState: 4
+				}
+			});
+		}, 8000);
+
+
+	},
+
+	toggleReady: function(gameId, playerId) {
+		var playerNumber, readyStatus;
+		for (i = 0; i < Rooms.findOne({_id: gameId}).players.length; i++) {
+			if (Rooms.findOne({_id: gameId}).players[i].playerid == playerId) {
+				playerNumber = i;
+				readyStatus = Rooms.findOne({_id: gameId}).players[playerNumber].readyStatus;
+			}
+		}
+		var query = "players." + playerNumber + ".readyStatus";
+		var setReady = {};
+
+		// Toggle player's ready status
+		setReady[query] = readyStatus ? false : true;
+		Rooms.update({_id: gameId},
+		 	{$set: setReady
+		});
 	}
 
 });
+
+/* states
+
+0: pregame
+1: player choosing a clue
+2: money display, disable buttons, 2 seconds
+3: clue display, 4 seconds
+4: players buzzing in, 5 seconds
+5: player answering, 5 seconds, back to state 1
+6: if all clues selected, end game
+*/

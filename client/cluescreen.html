@@ -1,21 +1,30 @@
 <template name="cluescreen">
 <div class="col-md-5 clue-screen {{cluescreenactive}}">
 	<div class="clue-box">
+		{{{moneyDisplay}}}
 		{{activeClue}}
 		<div class="{{startButton}}"></div>
 	</div>
 	<hr>
-	<form>
-		{{#if preGame}}
-			{{#if owner}}
-				<button type="button" id="start" class="btn btn-lg btn-primary">Start</button>
+	<div class="row">
+		<form>
+			{{#if preGame}}
+				{{#if owner}}
+				<div class="row">
+					<center><button type="button" id="start" class="btn btn-lg btn-primary ready-start-button {{startDisable}}">Start</button></center>
+				</div>
+				{{else}}
+					<center><button type="button" id="ready" class="btn btn-lg ready-start-button btn-success">Ready</button></center>
+				{{/if}}
 			{{else}}
-				<button type="button" id="ready" class="btn btn-lg btn-success">Ready</button>
+				{{#if buzzer}}
+					<center><button type="button" id="buzzer" class="btn btn-lg ready-start-button btn-danger"></button></center>
+				{{else}}
+					<input type="text" id="answer" name="test" class="form-control" placeholder="Hey">
+					<center><button type="submit" id="submit" class="btn btn-default">SUBMIT</button></center>
+				{{/if}}
 			{{/if}}
-		{{else}}
-			<input type="text" id="answer" name="test" class="form-control" placeholder="Hey">
-			<center><button type="submit" class="btn btn-default">SUBMIT</button></center>
-		{{/if}}
-	</form>
+		</form>
+	</div>
 </div>
 </template>

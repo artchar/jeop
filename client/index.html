@@ -6,22 +6,21 @@
 
 <body>
 
-<div class="container main">
-	<div class="row">
-		{{> yield "board"}}
+{{#if currentUser}}
+	<div class="container main">
+		<div class="row">
+			{{> yield "board"}}
 
-		{{> yield "cluescreen"}}
+			{{> yield "cluescreen"}}
+		</div>
+		
+	<hr color="blue">
+
+			{{> yield "players"}}
+		
 	</div>
-</div>
-
-<div class="container">
-<hr color="blue">
-</div>
-
-<div class="container">
-		{{> yield "players"}}
-	
-</div>
-
+{{else}}
+{{redir}}
+{{/if}}
 </body>
 </template>

@@ -4,8 +4,12 @@
 
 		{{#each playerList}}
 			<div class="col-md-2 player-box {{playerAnswering}}">
-				<div class="name">{{this.player}}</div>
-				<div class="money">${{this.money}}</div>
+				<div class="name">{{this.player}} {{{currentPlayer}}}</div>
+				{{#if preGame}}
+					<div class="money">{{#if isOwner}}Game Creator{{else}}{{readyStatus}}{{/if}}</div>
+				{{else}}
+					<div class="money">${{this.money}}</div>
+				{{/if}}
 			</div>
 		{{/each}}
 		

@@ -52,6 +52,10 @@ Template.cluescreen.events({
 
 	"click #submit": function(event) {
 		event.setDefault();
+	},
+
+	"click #buzzer": function(event) {
+		event.setDefault();
 	}
 
 })

@@ -1,6 +1,6 @@
 Template.cluescreen.helpers({
 	activeClue: function() {
-		return Rooms.findOne({_id: Meteor.user().currentRoom}).currentState;
+		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue;
 	},
 
 	moneyDisplay: function() {
@@ -50,12 +50,16 @@ Template.cluescreen.events({
 		Meteor.call("toggleReady", Meteor.user().currentRoom, Meteor.user()._id);
 	},
 
-	"click #submit": function(event) {
-		event.setDefault();
+	"submit form": function(event) {
+		event.preventDefault();
+		alert("hi");
+		Meteor.call("checkAnswer")
 	},
 
 	"click #buzzer": function(event) {
-		event.setDefault();
+		event.preventDefault();
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4)
+			Meteor.call("buzzIn");
 	}
 
 })

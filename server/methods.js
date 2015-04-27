@@ -116,6 +116,8 @@ Meteor.methods({
 		var setClue = {};
 		setClue[query] = true;
 
+		var activeClue = Rooms.findOne({_id: gameId}).clues[cat].clues[clue].question;
+
 		Rooms.update({_id: gameId},
 			{$set: setClue
 		});
@@ -124,7 +126,8 @@ Meteor.methods({
 		Meteor.setTimeout(function() {
 			Rooms.update({_id: gameId},
 				{$set: {
-					currentState: 3
+					currentState: 3,
+					activeClue: activeClue
 				}
 			});
 		}, 4000);
@@ -138,6 +141,21 @@ Meteor.methods({
 			});
 		}, 8000);
 
+
+	},
+
+	//Enter state 5
+	buzzIn: function() {
+		Rooms.update({_id: Meteor.user().currentRoom},
+			{$set: {
+				currentState: 5,
+				answeringPlayer: this.userId
+			}
+		});
+	},
+
+	// Check player's answer, if correct go back to state 1
+	checkAnswer: function(answer) {
 
 	},
 

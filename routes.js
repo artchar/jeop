@@ -10,6 +10,8 @@ Router.route("rooms", {path: "/rooms",
 
 Router.route("/rooms/:_id", {
 	action: function() {
+
+		
 		this.render("game");
 
 		this.render("board", {
@@ -54,4 +56,12 @@ Router.route("/rooms/:_id", {
 	}
 
 
+});
+
+// Hook prevents users from joining started games
+Router.onBeforeAction(function() {
+	if(Rooms.findOne({_id: this.params._id}).currentState != 0)
+			Router.go("home");
+	}, {
+  	only: ["/rooms/:_id"]
 });

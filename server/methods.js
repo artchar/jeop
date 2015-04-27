@@ -1,3 +1,9 @@
+/*TODO: add guards to methods so users cant spam in console
+TODO: add guards to methods so users cant spam in console
+TODO: add guards to methods so users cant spam in console
+TODO: add guards to methods so users cant spam in console
+TODO: add guards to methods so users cant spam in console*/
+
 Meteor.methods({
 		addRoom:function(roomOwner, roomName, roomPassword, playerid) {
 
@@ -55,16 +61,24 @@ Meteor.methods({
 				player: roomOwner,
 				money: 0,
 				playerid: playerid,
-				readyStatus: true
+				readyStatus: true,
+				buzzInAbility: false
 			}],
 
-			activeClue: "",
+			// Category and clue indexes help check if a given answer is correct
+			activeClue: {
+				question: null,
+				answer: null,
+				worth: null
+			},
 
 			activePlayer: playerid,
 
 			answeringPlayer: null,
 
-			currentState: 0
+			currentState: 0,
+
+			canBuzzIn: false
 
 
 		});
@@ -104,19 +118,50 @@ Meteor.methods({
 
 	// Enter state 2: Show money value on the clue screen
 	clickClue: function(cat, clue, gameId) {
+		//TODO:
 		// Guard against client clicking buttons from console
 		// if (Rooms.findOne({_id: gameId}).currentState != 1)
 		// 	return;
+		var activeClueWorth;
+
+
+		switch (parseInt(clue)) {
+			case 0:
+				activeClueWorth = 400;
+				break;
+			case 1:
+				activeClueWorth = 800;
+				break;
+			case 2:
+				activeClueWorth = 1200;
+				break;
+			case 3:
+				activeClueWorth = 1600;
+				break;
+			case 4:
+				activeClueWorth = 2000;
+				break;
+			default:
+				activeClueWorth = 0;
+		}
+
 		Rooms.update({_id: gameId},
 			{$set: {
-				currentState: 2
+				currentState: 2,
+				"activeClue.worth": activeClueWorth
 			}
 		});
+
 		var query = "clues." + cat + "." + "clues." + clue +".selected";
 		var setClue = {};
 		setClue[query] = true;
 
-		var activeClue = Rooms.findOne({_id: gameId}).clues[cat].clues[clue].question;
+		// Update the active clue to the one the user clicked on
+		var activeClueQuestion = Rooms.findOne({_id: gameId}).clues[cat].clues[clue].question;
+		var activeClueAnswer = Rooms.findOne({_id: gameId}).clues[cat].clues[clue].answer;
+		
+
+
 
 		Rooms.update({_id: gameId},
 			{$set: setClue
@@ -127,10 +172,12 @@ Meteor.methods({
 			Rooms.update({_id: gameId},
 				{$set: {
 					currentState: 3,
-					activeClue: activeClue
+					"activeClue.question": activeClueQuestion,
+					"activeClue.answer": activeClueAnswer
 				}
 			});
 		}, 4000);
+
 
 		// Enter state 4
 		Meteor.setTimeout(function() {
@@ -154,9 +201,28 @@ Meteor.methods({
 		});
 	},
 
-	// Check player's answer, if correct go back to state 1
+	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
+		console.log("checking answer");
+		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {	// CORRECT
+			console.log("correct!");
+			Rooms.update({_id: Meteor.user().currentRoom}, {
+				$set: {
+					currentState: 1,
+					answeringPlayer: null,
+					"activeClue.question": null,
+					"activeClue.answer": null,
+					"activeClue.worth": null
+				},
+			 	$inc: {
+			 		"players.0.money": Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth
+			 	}
+			});
+		}
 
+		//TODO: incorrect answer logic
+		else																				// INCORRECT
+			console.log("incorrect");
 	},
 
 	toggleReady: function(gameId, playerId) {

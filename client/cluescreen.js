@@ -1,16 +1,14 @@
 Template.cluescreen.helpers({
 	activeClue: function() {
-		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue;
+		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
 	},
 
 	moneyDisplay: function() {
-		console.log("here");
+		console.log(Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth);
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
-			console.log("good");
-			return '<div class="money-display">$500</div>';
+			return '<div class="money-display">$' + Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth + '</div>';
 		}
 		else {
-			console.log("bad");
 			return "";
 		}
 	},
@@ -52,8 +50,8 @@ Template.cluescreen.events({
 
 	"submit form": function(event) {
 		event.preventDefault();
-		alert("hi");
-		Meteor.call("checkAnswer")
+		var answer = $("#answer").val();
+		Meteor.call("checkAnswer", answer);
 	},
 
 	"click #buzzer": function(event) {

@@ -6,7 +6,7 @@ Meteor.publish("rooms", function() {
 	return Rooms.find({currentState: 0}, {
 		fields: {
 			roomPassword: false,
-			clues: false,
+			clues: false
 		}
 	});
 })
@@ -17,7 +17,8 @@ Meteor.publish("currentRoom", function(id) {
 				return Rooms.find({_id: id}, {
 					fields: {
 						players: true,
-						activeClue: true,
+						"activeClue.question": true,
+						"activeClue.worth": true,
 						activePlayer: true,
 						currentState: true,
 						"clues.category": true,

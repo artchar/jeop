@@ -24,20 +24,14 @@ Template.cluescreen.helpers({
 	},
 
 	owner: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId == Meteor.userId())
-			return true;
-		else
-			return false;
+		return Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId == Meteor.userId();
 	},
 
 	buzzer: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer == Meteor.userId())
-			return false;
-		else
-			return true;
+		return Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer != Meteor.userId();
 	}
 
-})
+});
 
 Template.cluescreen.events({
 	"click #start": function(event) {
@@ -60,7 +54,7 @@ Template.cluescreen.events({
 			Meteor.call("buzzIn");
 	}
 
-})
+});
 
 /* states
 

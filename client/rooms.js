@@ -1,7 +1,7 @@
 Template.rooms.helpers({
 	username: function() {
 		if (Meteor.user() != null)
-			return Session.get("username");
+			return Meteor.user().username;
 	},
 
 	roomsList: function() {

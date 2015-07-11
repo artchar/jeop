@@ -28,7 +28,17 @@ Template.cluescreen.helpers({
 	},
 
 	buzzer: function() {
-		return Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer != Meteor.userId();
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer != Meteor.userId()) {
+			if (Rooms.findOne().players[Meteor.user().playerSlot].incorrect)
+				return false;
+			return true;
+		}
+		return false;
+	},
+
+	incorrect: function() {
+		var slot = Meteor.user().playerSlot;
+		return Rooms.findOne().players[slot].incorrect;
 	}
 
 });

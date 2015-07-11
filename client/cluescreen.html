@@ -16,7 +16,13 @@
 			{{else}}
 				{{#if buzzer}}
 					<center><button type="button" id="buzzer" class="btn btn-lg ready-start-button btn-danger"></button></center>
+					
+					
 				{{else}}
+
+					{{#if incorrect}}
+
+					{{else}}
 					<div class="row">
 						<div class="col-md-12">
 							<input type="text" id="answer" name="test" class="form-control" placeholder="Hey">
@@ -27,6 +33,7 @@
 							<center><button type="submit" id="submit" class="btn btn-success">Submit</button></center>
 						</div>
 					</div>
+					{{/if}}
 				{{/if}}
 			{{/if}}
 		</form>

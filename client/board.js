@@ -1,5 +1,3 @@
-
-
 Template.board.helpers({
 
 	clueHide: function(cat, clue) {
@@ -33,7 +31,7 @@ Template.board.helpers({
 	},
 
 	disable: function(cat, clue) {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 1)
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 1 || Rooms.findOne().activePlayer != Meteor.user()._id)
 			return "disabled";
 		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].clues[clue].selected)
 			return "disabled";

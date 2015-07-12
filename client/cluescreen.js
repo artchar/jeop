@@ -3,6 +3,23 @@ Template.cluescreen.helpers({
 		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
 	},
 
+	playerAnswer: function() {
+		return Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer;
+	},
+
+	answerCorrect: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentAnswerCorrect) {
+			return '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+		}
+		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentAnswerCorrect == false)
+		{
+			return '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>';
+		}
+		else {
+			return '';
+		}
+	},
+
 	moneyDisplay: function() {
 		console.log(Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth);
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
@@ -29,7 +46,7 @@ Template.cluescreen.helpers({
 
 	buzzer: function() {
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer != Meteor.userId()) {
-			if (Rooms.findOne().players[Meteor.user().playerSlot].incorrect)
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).players[Meteor.user().playerSlot].incorrect)
 				return false;
 			return true;
 		}
@@ -38,7 +55,7 @@ Template.cluescreen.helpers({
 
 	incorrect: function() {
 		var slot = Meteor.user().playerSlot;
-		return Rooms.findOne().players[slot].incorrect;
+		return Rooms.findOne({_id: Meteor.user().currentRoom}).players[slot].incorrect;
 	}
 
 });

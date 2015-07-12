@@ -24,7 +24,9 @@ Meteor.publish("currentRoom", function(id) {
 						"clues.category": true,
 						"clues.clues.selected": true,
 						ownerId: true,
-						answeringPlayer: true
+						answeringPlayer: true,
+						currentPlayerAnswer: true,
+						currentAnswerCorrect: true
 					}
 				});
 			}

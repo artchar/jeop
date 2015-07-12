@@ -1,11 +1,11 @@
-/*TODO: add guards to methods so users cant spam in console
-TODO: add guards to methods so users cant spam in console
-TODO: add guards to methods so users cant spam in console
-TODO: add guards to methods so users cant spam in console
-TODO: add guards to methods so users cant spam in console*/
+// TODO: add guards to methods so users cant spam in console
+// TODO: add guards to methods so users cant spam in console
+// TODO: add guards to methods so users cant spam in console
+// TODO: add guards to methods so users cant spam in console
+// TODO: add guards to methods so users cant spam in console
 
 Meteor.methods({
-		addRoom:function(roomOwner, roomName, roomPassword, playerid) {
+	addRoom:function(roomOwner, roomName, roomPassword, playerid) {
 
 	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
@@ -79,7 +79,11 @@ Meteor.methods({
 
 			currentState: 0,
 
-			canBuzzIn: false
+			canBuzzIn: false,
+
+			currentPlayerAnswer: null,
+
+			currentAnswerCorrect: null
 
 
 		});
@@ -209,104 +213,107 @@ Meteor.methods({
 
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
-		console.log("checking answer");
-		var allIncorrect = false;
-		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {	// CORRECT
-			console.log("correct!");
-			var slot = Meteor.user().playerSlot;
-			var q = "players." + slot + ".money";
-			var updateMoney = {};
-			updateMoney[q] = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth;
 
+		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {
 			Rooms.update({_id: Meteor.user().currentRoom}, {
-				$set: {
-					currentState: 1,
-					answeringPlayer: null,
-					activePlayer: Meteor.user()._id,
-					"activeClue.question": null,
-					"activeClue.answer": null,
-					"activeClue.worth": null
-				},
-			 	$inc: updateMoney
-			});
+					$set:{
+							currentPlayerAnswer: answer,
+							currentAnswerCorrect: true
+					   	  }
+				});	
 		}
 
-		//TODO: incorrect answer logic
-		else {					
-																	// INCORRECT
-
-			console.log(Rooms.findOne().players[0].incorrect);
-			console.log(Rooms.findOne().players[1].incorrect);
-			var incorrectCount = 0;
-			var slot = Meteor.user().playerSlot;
-			var qincorrect = "players." + slot + ".incorrect";
-			var updateIncorrect = {};
-			updateIncorrect[qincorrect] = true;
-			console.log(incorrectCount);
-
-			
-			console.log(Rooms.findOne().players[0].incorrect);
-			console.log(Rooms.findOne().players[1].incorrect);
-
-			var q = "players." + slot + ".money";
-			var updateMoney = {};
-			updateMoney[q] = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth * -1;
-
+		else {
 			Rooms.update({_id: Meteor.user().currentRoom}, {
-				$set: {
-						currentState: 4,
-						answeringPlayer: null
-				   	  }
-			});
+					$set:{
+							currentPlayerAnswer: answer,
+							currentAnswerCorrect: false
+					   	  }
+				});	
+		}
 
+		Meteor._sleepForMs(2000);
 
-			console.log(Rooms.findOne().players[0].incorrect);
-			console.log(Rooms.findOne().players[1].incorrect);
+		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {	// CORRECT
+				console.log("correct!");
+				var slot = Meteor.user().playerSlot;
+				var q = "players." + slot + ".money";
+				var updateMoney = {};
+				updateMoney[q] = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth;
 
-			Rooms.update({_id: Meteor.user().currentRoom}, {
-				$inc: updateMoney
-			});
-
-			Rooms.update({_id: Meteor.user().currentRoom}, {
-				$set: updateIncorrect
-			});
-
-			console.log(Rooms.findOne().players[0].incorrect);
-			console.log(Rooms.findOne().players[1].incorrect);
-
-			for (i = 0; i < Rooms.findOne().players.length; i++) {
-				console.log(Rooms.findOne().players[i].incorrect);
-				if (Rooms.findOne().players[i].incorrect) {
-					incorrectCount++;
-				}
-			}
-			if (incorrectCount == Rooms.findOne().players.length) {
 				Rooms.update({_id: Meteor.user().currentRoom}, {
-				$set: {
-					currentState: 1,
-					answeringPlayer: null,
-					"activeClue.question": null,
-					"activeClue.answer": null,
-					"activeClue.worth": null
-				}
-			});
-			}
-
-
-			
-			
-
-			for (i = 0; i < Rooms.findOne().players.length; i++) {
-				var qincorrect = "players." + i + ".incorrect";
-				var updateIncorrect = {};
-				updateIncorrect[qincorrect] = false;
-				Rooms.update({_id: Meteor.user().currentRoom}, {
-					$set: updateIncorrect
+					$set: {
+						currentState: 1,
+						answeringPlayer: null,
+						activePlayer: Meteor.user()._id,
+						"activeClue.question": null,
+						"activeClue.answer": null,
+						"activeClue.worth": null,
+						currentPlayerAnswer: null,
+						currentAnswerCorrect: null
+					},
+				 	$inc: updateMoney
 				});
 			}
 
+			//TODO: incorrect answer logic
+			else {	 			
+				var incorrectCount = 0;
+				var slot = Meteor.user().playerSlot;
+				var qincorrect = "players." + slot + ".incorrect";
+				var updateIncorrect = {};
+				updateIncorrect[qincorrect] = true;
 
-		}
+				var q = "players." + slot + ".money";
+				var updateMoney = {};
+				updateMoney[q] = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth * -1;
+
+				Rooms.update({_id: Meteor.user().currentRoom}, {
+					$set: {
+							currentState: 4,
+							answeringPlayer: null,
+							currentPlayerAnswer: null,
+							currentAnswerCorrect: null
+					   	  }
+				});
+
+				Rooms.update({_id: Meteor.user().currentRoom}, {
+					$inc: updateMoney
+				});
+				Rooms.update({_id: Meteor.user().currentRoom}, {
+					$set: updateIncorrect
+				});
+
+				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).players.length; i++) {
+					if (Rooms.findOne({_id: Meteor.user().currentRoom}).players[i].incorrect) {
+						incorrectCount++;
+					}
+				}
+				if (incorrectCount == Rooms.findOne({_id: Meteor.user().currentRoom}).players.length) {
+					Rooms.update({_id: Meteor.user().currentRoom}, {
+					$set: {
+						currentState: 1,
+						answeringPlayer: null,
+						"activeClue.question": null,
+						"activeClue.answer": null,
+						"activeClue.worth": null,
+						currentPlayerAnswer: null,
+						currentAnswerCorrect: null
+					}
+				});
+				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).players.length; i++) {
+						var qincorrect = "players." + i + ".incorrect";
+						var updateIncorrect = {};
+						updateIncorrect[qincorrect] = false;
+						Rooms.update({_id: Meteor.user().currentRoom}, {
+							$set: updateIncorrect
+							});
+					}	
+
+				}
+			}
+			
+		
 	},
 
 	toggleReady: function(gameId, playerId) {

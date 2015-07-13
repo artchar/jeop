@@ -20,6 +20,15 @@ Template.cluescreen.helpers({
 		}
 	},
 
+	theCorrectAnswer: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer != null) 
+			return "Correct answer: " + Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer;
+
+		else
+			return "";
+
+	},
+
 	moneyDisplay: function() {
 		console.log(Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth);
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {

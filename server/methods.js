@@ -1,11 +1,8 @@
-// TODO: add guards to methods so users cant spam in console
-// TODO: add guards to methods so users cant spam in console
-// TODO: add guards to methods so users cant spam in console
-// TODO: add guards to methods so users cant spam in console
-// TODO: add guards to methods so users cant spam in console
 
 Meteor.methods({
 	addRoom:function(roomOwner, roomName, roomPassword, playerid) {
+
+		
 
 	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
@@ -83,7 +80,9 @@ Meteor.methods({
 
 			currentPlayerAnswer: null,
 
-			currentAnswerCorrect: null
+			currentAnswerCorrect: null,
+
+			correctAnswer: null
 
 
 		});
@@ -214,15 +213,18 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
+		// Correct
 		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {
 			Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set:{
 							currentPlayerAnswer: answer,
-							currentAnswerCorrect: true
+							currentAnswerCorrect: true,
+							correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer
 					   	  }
 				});	
 		}
 
+		// Incorrect
 		else {
 			Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set:{
@@ -250,13 +252,14 @@ Meteor.methods({
 						"activeClue.answer": null,
 						"activeClue.worth": null,
 						currentPlayerAnswer: null,
-						currentAnswerCorrect: null
+						currentAnswerCorrect: null,
+						correctAnswer: null
 					},
 				 	$inc: updateMoney
 				});
 			}
 
-			//TODO: incorrect answer logic
+			//incorrect
 			else {	 			
 				var incorrectCount = 0;
 				var slot = Meteor.user().playerSlot;
@@ -273,7 +276,8 @@ Meteor.methods({
 							currentState: 4,
 							answeringPlayer: null,
 							currentPlayerAnswer: null,
-							currentAnswerCorrect: null
+							currentAnswerCorrect: null,
+							correctAnswer: null
 					   	  }
 				});
 
@@ -290,6 +294,15 @@ Meteor.methods({
 					}
 				}
 				if (incorrectCount == Rooms.findOne({_id: Meteor.user().currentRoom}).players.length) {
+
+					Rooms.update({_id: Meteor.user().currentRoom}, {
+					$set: {
+						correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer
+					}
+				});
+
+					Meteor._sleepForMs(2000);
+
 					Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set: {
 						currentState: 1,
@@ -298,9 +311,12 @@ Meteor.methods({
 						"activeClue.answer": null,
 						"activeClue.worth": null,
 						currentPlayerAnswer: null,
-						currentAnswerCorrect: null
+						currentAnswerCorrect: null,
+						correctAnswer: null
 					}
 				});
+
+
 				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).players.length; i++) {
 						var qincorrect = "players." + i + ".incorrect";
 						var updateIncorrect = {};
@@ -312,6 +328,8 @@ Meteor.methods({
 
 				}
 			}
+
+
 			
 		
 	},
@@ -344,5 +362,6 @@ Meteor.methods({
 3: clue display, 4 seconds
 4: players buzzing in, 5 seconds
 5: player answering, 5 seconds, back to state 1
-6: if all clues selected, end game
+6: checking answer
+7: if all clues selected, end game
 */

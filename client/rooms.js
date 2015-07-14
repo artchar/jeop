@@ -12,6 +12,11 @@ Template.rooms.helpers({
 		Router.go('home');
 	},
 
+	loading: function() {
+		if(Session.get("loading"))
+			return true;
+	}
+
 });
 
 Template.rooms.events({
@@ -30,10 +35,15 @@ Template.rooms.events({
 			gameid = result;
 		});
 
-		Meteor.setTimeout(function() {
-			Session.set("currentRoom", gameid);
-			Router.go("/rooms/" + gameid);
-		}, 2000);
+		var handle = Meteor.setInterval(function() {
+			if (gameid != undefined) {
+				Router.go("/rooms/" + gameid);
+				Meteor.clearInterval(handle);
+			}
+			else{
+				return;
+			}
+		}, 1);
 			
 
 	},
@@ -51,7 +61,6 @@ Template.rooms.events({
 		Meteor.call("joinRoom", playerid, playerName, gameid);
 		
 		Meteor.setTimeout(function() {
-			Session.set("currentRoom", gameid);
 			Router.go("/rooms/" + gameid);
 		}, 2000);
 	}

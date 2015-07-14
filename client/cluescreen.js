@@ -71,7 +71,7 @@ Template.cluescreen.helpers({
 
 Template.cluescreen.events({
 	"click #start": function(event) {
-		Meteor.call("startGame", Meteor.user().currentRoom);
+		Meteor.call("startGame");
 	},
 
 	"click #ready": function (event) {
@@ -80,8 +80,17 @@ Template.cluescreen.events({
 
 	"submit form": function(event) {
 		event.preventDefault();
+
 		var answer = $("#answer").val();
-		Meteor.call("checkAnswer", answer);
+		$("#answer-form").hide();
+
+		Meteor.setTimeout(function() {
+			Meteor.call("checkAnswer", answer);
+		}, 1200);
+
+		Meteor.setTimeout(function() {
+			$("#answer-form").show();
+		}, 4000);
 	},
 
 	"click #buzzer": function(event) {

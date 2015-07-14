@@ -2,7 +2,7 @@
 Meteor.methods({
 	addRoom:function(roomOwner, roomName, roomPassword, playerid) {
 
-		
+
 
 	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
@@ -117,8 +117,17 @@ Meteor.methods({
 
 
 	// Enter state 1: Current user can  select a clue
-	startGame: function(gameId) {
-		Rooms.update({_id: gameId},
+	startGame: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId != this.userId || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 0) {
+			return;
+		}
+
+		for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).players.length; i++) {
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).players[i].readyStatus != true)
+				return;
+		}
+
+		Rooms.update({_id: Meteor.user().currentRoom},
 			{$set: {
 				currentState: 1
 				}
@@ -127,10 +136,10 @@ Meteor.methods({
 
 	// Enter state 2: Show money value on the clue screen
 	clickClue: function(cat, clue, gameId) {
-		//TODO:
-		// Guard against client clicking buttons from console
-		// if (Rooms.findOne({_id: gameId}).currentState != 1)
-		// 	return;
+		if (Rooms.findOne({_id: gameId}).currentState != 1 || Rooms.findOne({_id: gameId}).activePlayer != this.userId)
+			return;
+
+
 		var activeClueWorth;
 
 
@@ -212,6 +221,9 @@ Meteor.methods({
 
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
+
+		if(Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer != null)
+			return;
 
 		// Correct
 		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {
@@ -350,8 +362,14 @@ Meteor.methods({
 		Rooms.update({_id: gameId},
 		 	{$set: setReady
 		});
-	}
+	},
 
+	playerLeave: function() {
+		console.log("A");
+		Rooms.update({_id: Meteor.user().currentRoom}, 
+			{$pull: {players: {playerid: this.userId}}
+			});
+	}
 });
 
 /* states

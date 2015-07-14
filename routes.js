@@ -51,6 +51,11 @@ Router.route("/rooms/:_id", {
 
 	},
 
+	onStop: function() {
+		console.log("AHIH");
+		Meteor.call("playerLeave");
+	},
+
 	waitOn: function() {
 		return Meteor.subscribe("currentRoom", this.params._id);
 	}

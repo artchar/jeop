@@ -1,4 +1,7 @@
 <template name="rooms">
+{{#if loading}}
+	{{> spinner}}
+{{/if}}
 
 {{#if currentUser}}
 	<div class="container ss">

@@ -365,10 +365,27 @@ Meteor.methods({
 	},
 
 	playerLeave: function() {
-		console.log("A");
+		if (Meteor.user().currentRoom == null)
+			return;
+
+		var p = Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers;
+
 		Rooms.update({_id: Meteor.user().currentRoom}, 
-			{$pull: {players: {playerid: this.userId}}
+			{$pull: {players: {playerid: this.userId},
+			 }
 			});
+
+		Rooms.update({_id: Meteor.user().currentRoom}, 
+			{$inc: {roomplayers: -1}
+			 }
+			);
+		
+		Meteor.setTimeout(function() {Meteor.users.update({_id: this.userId},
+			{$set: {currentRoom: null, playerSlot: null}
+			 });}, 3000);
+
+		Router.go("rooms");
+		
 	}
 });
 

@@ -58,11 +58,13 @@ Template.rooms.events({
 		var gameid = event.currentTarget.id;
 		var playerid = Meteor.userId();
 		var playerName = Meteor.user().username;
+		Session.set("loading", true);
 		Meteor.call("joinRoom", playerid, playerName, gameid);
 		
 		Meteor.setTimeout(function() {
 			Router.go("/rooms/" + gameid);
-		}, 2000);
+			Session.set("loading", false);
+		}, 1500);
 	}
 });
 

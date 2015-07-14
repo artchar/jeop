@@ -27,7 +27,8 @@ Meteor.publish("currentRoom", function(id) {
 						answeringPlayer: true,
 						currentPlayerAnswer: true,
 						currentAnswerCorrect: true,
-						correctAnswer: true
+						correctAnswer: true,
+						roomplayers: true
 					}
 				});
 			}

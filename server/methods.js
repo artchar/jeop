@@ -384,6 +384,16 @@ Meteor.methods({
 			{$set: {currentRoom: null, playerSlot: null}
 			 });}, 3000);
 
+		var handle = Meteor.setInterval(function() {
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers != p) {
+				Router.go("/rooms/" + gameid);
+				Meteor.clearInterval(handle);
+			}
+			else{
+				return;
+			}
+		}, 5);
+
 		Router.go("rooms");
 		
 	}

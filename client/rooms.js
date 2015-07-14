@@ -43,7 +43,7 @@ Template.rooms.events({
 			else{
 				return;
 			}
-		}, 1);
+		}, 5);
 			
 
 	},

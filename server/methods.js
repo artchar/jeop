@@ -346,12 +346,12 @@ Meteor.methods({
 		
 	},
 
-	toggleReady: function(gameId, playerId) {
+	toggleReady: function() {
 		var playerNumber, readyStatus;
-		for (i = 0; i < Rooms.findOne({_id: gameId}).players.length; i++) {
-			if (Rooms.findOne({_id: gameId}).players[i].playerid == playerId) {
+		for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).players.length; i++) {
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).players[i].playerid == this.userId) {
 				playerNumber = i;
-				readyStatus = Rooms.findOne({_id: gameId}).players[playerNumber].readyStatus;
+				readyStatus = Rooms.findOne({_id: Meteor.user().currentRoom}).players[playerNumber].readyStatus;
 			}
 		}
 		var query = "players." + playerNumber + ".readyStatus";
@@ -359,7 +359,7 @@ Meteor.methods({
 
 		// Toggle player's ready status
 		setReady[query] = readyStatus ? false : true;
-		Rooms.update({_id: gameId},
+		Rooms.update({_id: Meteor.user().currentRoom},
 		 	{$set: setReady
 		});
 	},
@@ -369,6 +369,8 @@ Meteor.methods({
 			return;
 
 		var p = Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers;
+		var gameId = Meteor.user().currentRoom;
+		var userId = this.userId;
 
 		Rooms.update({_id: Meteor.user().currentRoom}, 
 			{$pull: {players: {playerid: this.userId},
@@ -380,14 +382,14 @@ Meteor.methods({
 			 }
 			);
 		
-		Meteor.setTimeout(function() {Meteor.users.update({_id: this.userId},
-			{$set: {currentRoom: null, playerSlot: null}
-			 });}, 3000);
 
-		var handle = Meteor.setInterval(function() {
-			if (Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers != p) {
-				Router.go("/rooms/" + gameid);
-				Meteor.clearInterval(handle);
+		var handle2 = Meteor.setInterval(function() {
+			if (Rooms.findOne({_id: gameId}).roomplayers != p) {
+
+				Meteor.users.update({_id: userId},
+					{$set: {currentRoom: null, playerSlot: null}
+				});
+				Meteor.clearInterval(handle2);
 			}
 			else{
 				return;
@@ -395,6 +397,7 @@ Meteor.methods({
 		}, 5);
 
 		Router.go("rooms");
+
 		
 	}
 });

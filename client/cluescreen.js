@@ -75,7 +75,7 @@ Template.cluescreen.events({
 	},
 
 	"click #ready": function (event) {
-		Meteor.call("toggleReady", Meteor.user().currentRoom, Meteor.user()._id);
+		Meteor.call("toggleReady");
 	},
 
 	"submit form": function(event) {

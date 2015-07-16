@@ -111,3 +111,4 @@ Template.cluescreen.events({
 5: player answering, 5 seconds, back to state 1
 6: if all clues selected, end game
 */
+

@@ -1,9 +1,12 @@
 
 Meteor.methods({
-	addRoom:function(roomOwner, roomName, roomPassword, playerid) {
+	addRoom:function(roomName, roomPassword) {
+		
+		if (Meteor.user().currentRoom != null)
+			return;
 
-
-
+		var playerid = Meteor.userId();
+		var roomOwner = Meteor.user().username;
 	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
 		var randoms = [];
@@ -97,6 +100,9 @@ Meteor.methods({
 	},
 
 	joinRoom: function(playerid, playerName, gameid) {
+
+		if (Meteor.user().currentRoom != null)
+			return;
 		Rooms.update({_id: gameid},
 			{$inc: {roomplayers: 1},
 			 $push: {players: {
@@ -211,6 +217,8 @@ Meteor.methods({
 
 	//Enter state 5
 	buzzIn: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == null)
+			return;
 		Rooms.update({_id: Meteor.user().currentRoom},
 			{$set: {
 				currentState: 5,
@@ -347,6 +355,10 @@ Meteor.methods({
 	},
 
 	toggleReady: function() {
+		if (Meteor.user().currentRoom == null || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 0) {
+			return;
+		}
+
 		var playerNumber, readyStatus;
 		for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).players.length; i++) {
 			if (Rooms.findOne({_id: Meteor.user().currentRoom}).players[i].playerid == this.userId) {
@@ -368,9 +380,21 @@ Meteor.methods({
 		if (Meteor.user().currentRoom == null)
 			return;
 
+		if (Meteor.userId() == Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId){
+			console.log("OWNER LEFT");
+			Rooms.remove({_id: Meteor.user().currentRoom});
+			return;
+		}
+
 		var p = Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers;
 		var gameId = Meteor.user().currentRoom;
 		var userId = this.userId;
+		var slot = Meteor.user().playerSlot;
+
+		for (i = slot+1; i < p; i++) {
+			Meteor.users.update({_id: Rooms.findOne({_id: gameId}).players[i].playerid},
+				{$inc: {playerSlot: -1}});
+		}
 
 		Rooms.update({_id: Meteor.user().currentRoom}, 
 			{$pull: {players: {playerid: this.userId},
@@ -396,9 +420,10 @@ Meteor.methods({
 			}
 		}, 5);
 
-		Router.go("rooms");
+	},
 
-		
+	newGame: function() {
+
 	}
 });
 

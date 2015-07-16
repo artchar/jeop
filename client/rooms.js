@@ -24,14 +24,13 @@ Template.rooms.events({
 		event.preventDefault();
 
 		$("#createRoom").modal("hide");
-		var owner = Meteor.user().username;
 		var roomName = event.target.roomName.value;
 		var roomPassword = event.target.roomPassword.value;
 		var id = Meteor.userId();
 		var gameid;
 		$("#roomName").val("");
 		$("#roomPassword").val("");
-		Meteor.apply("addRoom", [owner, roomName, roomPassword, Meteor.userId()], true, function(err, result){
+		Meteor.apply("addRoom", [roomName, roomPassword, Meteor.userId()], true, function(err, result){
 			gameid = result;
 		});
 
@@ -68,3 +67,6 @@ Template.rooms.events({
 	}
 });
 
+Meteor.setInterval(function() {
+	
+})

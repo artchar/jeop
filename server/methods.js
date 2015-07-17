@@ -399,9 +399,22 @@ Meteor.methods({
 			}
 		}
 
+		if (Meteor.userId() == Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer) {
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers > 1) {
+				Rooms.update({_id: Meteor.user().currentRoom}, {
+					$set: {
+							currentState: 4,
+							answeringPlayer: null,
+							currentPlayerAnswer: null,
+							currentAnswerCorrect: null,
+							correctAnswer: null
+					   	  }
+				});
+
+			}
+		}
+
 		
-
-
 
 		var query = "players.0.readyStatus";
 		var setReady = {};

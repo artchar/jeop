@@ -4,7 +4,5 @@ Template.game.helpers({
 	}
 });
 
-if (Meteor.isClient) {
-	
-}
+
 

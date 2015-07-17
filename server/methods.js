@@ -377,15 +377,35 @@ Meteor.methods({
 	},
 
 	playerLeave: function() {
-		if (Meteor.user().currentRoom == null)
-			return;
-
-		if (Meteor.userId() == Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId){
-			console.log("OWNER LEFT");
-			Rooms.remove({_id: Meteor.user().currentRoom});
+		if (Meteor.user().currentRoom == null) {
 			return;
 		}
 
+		if (Meteor.userId() == Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId){
+			
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers > 1) {
+				Rooms.update({_id: Meteor.user().currentRoom}, 
+					{$set: {roomOwner: Rooms.findOne(Meteor.user().currentRoom).players[1].player,
+							ownerId: Rooms.findOne(Meteor.user().currentRoom).players[1].playerid}});
+
+			}
+		}
+
+		if (Meteor.userId() == Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer) {
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers > 1) {
+				Rooms.update({_id: Meteor.user().currentRoom}, 
+					{$set: {activePlayer: Rooms.findOne(Meteor.user().currentRoom).players[1].playerid}});
+
+			}
+		}
+
+		
+
+
+
+		var query = "players.0.readyStatus";
+		var setReady = {};
+		setReady[query] = true;
 		var p = Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers;
 		var gameId = Meteor.user().currentRoom;
 		var userId = this.userId;
@@ -406,7 +426,10 @@ Meteor.methods({
 			 }
 			);
 		
-
+		Rooms.update({_id: Meteor.user().currentRoom}, 
+			{$set: setReady
+			 }
+			);
 		var handle2 = Meteor.setInterval(function() {
 			if (Rooms.findOne({_id: gameId}).roomplayers != p) {
 
@@ -420,6 +443,14 @@ Meteor.methods({
 			}
 		}, 5);
 
+	},
+
+	roomCleanup: function() {
+		var rooms = Rooms.find({roomplayers: 0});
+
+		rooms.forEach(function(room) {
+			Rooms.remove({_id: room._id});
+		});
 	},
 
 	newGame: function() {

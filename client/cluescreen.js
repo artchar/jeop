@@ -29,6 +29,15 @@ Template.cluescreen.helpers({
 
 	},
 
+	currentClueCategory: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
+			return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.category;
+		}
+		else {
+			return "";
+		}
+	},
+
 	moneyDisplay: function() {
 		console.log(Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth);
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {

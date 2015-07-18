@@ -53,7 +53,7 @@ Template.board.events({
 		$(".btn-money").addClass('disabled');
 		var cat = event.currentTarget.id[3];
 		var clue = event.currentTarget.id[8];
-		Meteor.call("clickClue", cat, clue, Meteor.user().currentRoom);
+		Meteor.call("clickClue", cat, clue);
 		// Meteor.setTimeout(function() {
 		// 	$(".btn-money").removeClass('disabled');
 		// }, 900);

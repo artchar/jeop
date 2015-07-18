@@ -19,6 +19,7 @@ Meteor.publish("currentRoom", function(id) {
 						players: true,
 						"activeClue.question": true,
 						"activeClue.worth": true,
+						"activeClue.category": true,
 						activePlayer: true,
 						currentState: true,
 						"clues.category": true,

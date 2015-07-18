@@ -20,5 +20,13 @@ Template.players.helpers({
 		}
 		else
 			return "";
+	},
+
+	isWinner: function() {
+		if(Template.currentData().isWinner) {
+			return "WINNER!";
+		}
+		else
+			return "";
 	}
 })

@@ -29,7 +29,12 @@ Meteor.publish("currentRoom", function(id) {
 						currentPlayerAnswer: true,
 						currentAnswerCorrect: true,
 						correctAnswer: true,
-						roomplayers: true
+						roomplayers: true,
+						cluePickTimer: true,
+						answerTimer: true,
+						clueActiveTimer: true,
+						buzzTimer: true,
+						cluesDone: true
 					}
 				});
 			}

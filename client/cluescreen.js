@@ -1,3 +1,5 @@
+var han2dle = "HH";
+
 Template.cluescreen.helpers({
 	activeClue: function() {
 		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
@@ -39,7 +41,6 @@ Template.cluescreen.helpers({
 	},
 
 	moneyDisplay: function() {
-		console.log(Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth);
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
 			return '<div class="money-display">$' + Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth + '</div>';
 		}
@@ -74,6 +75,31 @@ Template.cluescreen.helpers({
 	incorrect: function() {
 		var slot = Meteor.user().playerSlot;
 		return Rooms.findOne({_id: Meteor.user().currentRoom}).players[slot].incorrect;
+	},
+
+	answerTimer: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer == Meteor.userId()) {
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).answerTimer == 0) {
+				$("#answer-form").submit();
+				return ":00";
+			}
+			return ":0" + Rooms.findOne({_id: Meteor.user().currentRoom}).answerTimer;
+		}
+		else return "";
+	},
+
+	clueActiveTimer: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4) {
+			return ":0" + Rooms.findOne({_id: Meteor.user().currentRoom}).clueActiveTimer;
+		}
+		else return "";
+	},
+
+	lightup: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4) {
+			return "lightup";
+		}
+		else return "";
 	}
 
 });
@@ -85,6 +111,10 @@ Template.cluescreen.events({
 
 	"click #ready": function (event) {
 		Meteor.call("toggleReady");
+	},
+
+	"click #newgame": function(event) {
+		Meteor.call("newGame");
 	},
 
 	"submit form": function(event) {
@@ -106,6 +136,14 @@ Template.cluescreen.events({
 		event.preventDefault();
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4)
 			Meteor.call("buzzIn");
+		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 3) {
+			var hideTime = Rooms.findOne({_id: Meteor.user().currentRoom}).buzzTimer * 100;
+			hideTime += 300;
+			$("#buzzer").hide();
+			Meteor.setTimeout(function() {
+				$("#buzzer").show();
+			}, hideTime);
+		}
 	}
 
 });

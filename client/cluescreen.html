@@ -1,26 +1,32 @@
 <template name="cluescreen">
-<div class="col-md-5 clue-screen {{cluescreenactive}}">
-	<div class="clue-box">
+<div class="col-md-5 clue-screen {{cluescreenactive}} {{playerAnswering}}">
+	<div class="clue-box {{lightup}}">
 
 		{{currentClueCategory}}<br>
 		{{{moneyDisplay}}}
 		{{activeClue}}
 		<div class="{{startButton}}"></div>
 	</div>
-	<div class="current-answer">{{playerAnswer}} {{{answerCorrect}}} {{{theCorrectAnswer}}}</div>
+	<div class="current-answer">{{playerAnswer}} {{{answerCorrect}}} {{{theCorrectAnswer}}} {{clueActiveTimer}}</div>
 	<hr>
 		<form id="answer-form">
 			{{#if preGame}}
 				{{#if owner}}
+					{{#if newGame}}
+					<center><button type="button" id="newgame" class="btn btn-lg btn-primary ready-start-button">New Game</button></center>
+					{{else}}
 					<center><button type="button" id="start" class="btn btn-lg btn-primary ready-start-button {{startDisable}}">Start</button></center>
+					{{/if}}
 				{{else}}
-					<center><button type="button" id="ready" class="btn btn-lg ready-start-button btn-success">Ready</button></center>
+					{{#if newGame}}
+					{{else}}
+						<center><button type="button" id="ready" class="btn btn-lg ready-start-button btn-success">Ready</button></center>
+					{{/if}}
 				{{/if}}
 			{{else}}
 				{{#if buzzer}}
-					<center><button type="button" id="buzzer" class="btn btn-lg ready-start-button btn-danger"></button></center>
-					
-					
+					<center><button type="button" id="buzzer" class="btn btn-lg ready-start-button btn-danger">BUZZER</button></center>
+
 				{{else}}
 
 					{{#if incorrect}}
@@ -33,7 +39,8 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<center><button type="submit" id="submit" class="btn btn-success">Submit</button></center>
+							<center><button type="submit" id="submit" class="btn btn-success">Submit</button>
+							<span>{{answerTimer}}</span></center>
 						</div>
 					</div>
 					{{/if}}

@@ -4,5 +4,3 @@ Template.game.helpers({
 	}
 });
 
-
-

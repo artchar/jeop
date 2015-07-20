@@ -6,11 +6,15 @@
 			<div class="col-md-2 player-box {{playerAnswering}}">
 				<div class="name">{{this.player}} {{{currentPlayer}}}</div>
 				{{#if preGame}}
+					{{#if newGame}}
+						<div class="money">${{this.money}}</div>
+					{{else}}
 					<div class="money">{{#if isOwner}}Game Creator{{else}}{{readyStatus}}{{/if}}</div>
+					{{/if}}
 				{{else}}
 					<div class="money">${{this.money}}</div>
 				{{/if}}
-				{{#if isWinner}}WINNER{{/if}}
+				{{#if isWinner}}<div class="winner">!WINNER!</div>{{/if}}
 			</div>
 		{{/each}}
 		

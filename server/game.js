@@ -8,4 +8,4 @@ Meteor.setInterval(function() {
 
 Meteor.setInterval(function() {
 	Meteor.call("playerCleanup");
-}, 10000)
+}, 1000)

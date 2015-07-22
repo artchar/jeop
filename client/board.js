@@ -36,6 +36,38 @@ Template.board.helpers({
 		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].clues[clue].selected)
 			return "disabled";
 		else return "";
+	},
+
+	clicker: function() {
+		var counter = 0;
+		var clicktimer = Meteor.setInterval(function() {
+			if (Meteor.user().currentRoom == null)
+				return;
+			console.log("AA4A");
+			counter++;
+			if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId()) {
+				if (counter == 6) {
+					for (i = 0; i < 5; i++) {
+						for (j = 0; j < 4; j++) {
+							if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[i].clues[j].selected) {
+								var string = "#cat" + i + "clue" + j;
+								$(string).click();
+								counter = 0;
+								Meteor.clearInterval(clicktimer);
+								return;
+							}
+						}
+					}
+				}
+			}
+		}, 1000);
+	},
+
+	activePlayer: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId())
+			return true;
+		else
+			return false;
 	}
 
 
@@ -63,6 +95,37 @@ Template.board.events({
 Tracker.autorun(function() {
 	Meteor.subscribe("user");
 })
+
+// Meteor.setInterval(function() {
+// 	var counter = 0;
+// 	var clicktimer = Meteor.setInterval(function() {
+// 		if (Meteor.user().currentRoom == undefined){
+// 			Meteor.clearInterval(clicktimer);
+// 			return;
+// 		}
+// 		counter++;
+// 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId()) {
+// 			if (counter == 6) {
+// 				for (i = 0; i < 5; i++) {
+// 					for (j = 0; j < 4; j++) {
+// 						if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[i].clues[j].selected) {
+// 							var string = "#cat" + i + "clue" + j;
+// 							$(string).click();
+// 							counter = 0;
+// 							Meteor.clearInterval(clicktimer);
+// 							return;
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}, 1000);
+// }, 10000);
+
+
+
+
+
 
 
 /* states

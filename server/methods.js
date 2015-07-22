@@ -93,7 +93,7 @@ Meteor.methods({
 
 			correctAnswer: null,
 
-			cluePickTimer: 8,
+			cluePickTimer: 5,
 			answerTimer: 7,
 			clueActiveTimer: 5,
 			buzzTimer: 30
@@ -135,6 +135,7 @@ Meteor.methods({
 
 	// Enter state 1: Current user can  select a clue
 	startGame: function() {
+
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).ownerId != this.userId || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 0) {
 			return;
 		}
@@ -156,7 +157,7 @@ Meteor.methods({
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 1 || Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer != this.userId)
 			return;
 
-
+		var playerid = Meteor.userId();
 		var activeClueWorth;
 
 		var gameid = Meteor.user().currentRoom;
@@ -251,19 +252,83 @@ Meteor.methods({
 
 				if (Rooms.findOne({_id: gameid}).clueActiveTimer == 0) {
 					Meteor.clearInterval(clueActiveHandle);
-					console.log("abc");
-					Rooms.update({_id: gameid},
-					{$inc: {
-						cluesDone: 1
-					}
-					});
+
+					Rooms.update({_id: gameid}, {
+						$set:{
+								currentState: 5,
+								correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer,
+								currentAnswerCorrect: null
+						   	  }
+					});	
+
+					Meteor.setTimeout(function() {
+						Rooms.update({_id: gameid},
+						{	$set: {
+							currentState: 1,
+							answeringPlayer: null,
+							activePlayer: playerid,
+							"activeClue.question": null,
+							"activeClue.answer": null,
+							"activeClue.worth": null,
+							"activeClue.category": null,
+							currentPlayerAnswer: null,
+							currentAnswerCorrect: null,
+							correctAnswer: null,
+							clueActiveTimer: 5
+							},
+
+							$inc: {
+							cluesDone: 1
+							}
+						});
+					}, 1000);
 					
-					if (Rooms.findOne({_id: gameid}).cluesDone == 2) {
-						console.log("GAME OVER!");
+					Meteor.setTimeout(function() {
+						if (Rooms.findOne({_id: gameid}).cluesDone == 3) {
+						Rooms.update({_id: gameid}, {
+							$set: {
+								currentState: 7,
+								answeringPlayer: null,
+								activePlayer: playerid,
+								"activeClue.question": null,
+								"activeClue.answer": null,
+								"activeClue.worth": null,
+								"activeClue.category": null,
+								currentPlayerAnswer: null,
+								currentAnswerCorrect: null,
+								correctAnswer: null
+							}
+						});
+
+						var max = -999999;
+						for (i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
+							if (Rooms.findOne({_id: gameid}).players[i].money > max){
+								max = Rooms.findOne({_id: gameid}).players[i].money;
+							}
+						}
+
+						for (i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
+							if (Rooms.findOne({_id: gameid}).players[i].money == max) {
+								var q = "players." + i + ".isWinner";
+								var updateWin = {};		
+								updateWin[q] = true;
+
+						Rooms.update({_id: gameid}, {
+							$set: updateWin
+							});				
+						}
 					}
+
+						for (i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
+								var qmoney = "players." + i + ".incorrect";
+								var updateMoney = {};
+								updateMoney[qmoney] = 0;
+								Rooms.update({_id: gameid}, {
+									$set: updateMoney
+								});
+							}
+					}}, 2300);
 				}
-
-
 
 			}, 1000);
 		}, 7000);
@@ -277,6 +342,8 @@ Meteor.methods({
 		var gameid = Meteor.user().currentRoom;
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == null || Rooms.findOne({_id: Meteor.user().currentState}) == 5)
 			return;
+
+		Meteor.clearInterval(clueActiveHandle);
 
 
 		Rooms.update({_id: Meteor.user().currentRoom},
@@ -303,10 +370,14 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
-		if(Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer != null)
-			return;
 
 		var gameid = Meteor.user().currentRoom;
+		var playerid = Meteor.userId();
+		var correct;
+
+		if(Rooms.findOne({_id: gameid}).currentPlayerAnswer != null)
+			return;
+
 
 		Meteor.clearInterval(answerTimerHandle);
 		Rooms.update({_id: Meteor.user().currentRoom}, {
@@ -317,7 +388,7 @@ Meteor.methods({
 
 		// Correct
 		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {
-
+			correct = true;
 			Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set:{
 							currentPlayerAnswer: answer,
@@ -361,12 +432,23 @@ Meteor.methods({
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null,
-						clueActiveTimer: 8
+						clueActiveTimer: 5
 					},
 				 	$inc: updateMoney
 				});
 
-				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 30) {
+				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
+						console.log("AS2ASFAS");
+						var qmoney = "players." + i + ".incorrect";
+						var updateMoney = {};
+						updateMoney[qmoney] = false;
+						Rooms.update({_id: gameid}, {
+							$set: updateMoney
+						});
+					}
+
+
+				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 3) {
 					Meteor._sleepForMs(1000);
 					var max = -999999;
 					for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
@@ -403,10 +485,11 @@ Meteor.methods({
 				});
 
 				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
+						console.log("AS2ASFAS");
 						var qmoney = "players." + i + ".incorrect";
 						var updateMoney = {};
-						updateMoney[qmoney] = 0;
-						Rooms.update({_id: Meteor.user().currentRoom}, {
+						updateMoney[qmoney] = false;
+						Rooms.update({_id: gameid}, {
 							$set: updateMoney
 						});
 					}
@@ -448,6 +531,7 @@ Meteor.methods({
 						incorrectCount++;
 					}
 				}
+
 				if (incorrectCount == Rooms.findOne({_id: Meteor.user().currentRoom}).players.length) {
 
 					Rooms.update({_id: Meteor.user().currentRoom}, {
@@ -470,7 +554,8 @@ Meteor.methods({
 						"activeClue.category": null,
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
-						correctAnswer: null
+						correctAnswer: null,
+						clueActiveTimer: 5
 					}
 				});
 
@@ -483,7 +568,6 @@ Meteor.methods({
 							$set: updateIncorrect
 							});
 					}	
-
 				}
 			}
 
@@ -532,11 +616,110 @@ Meteor.methods({
 							$set: updateMoney
 						});
 					}
+					return;
 			}
 
+			if (incorrectCount != Rooms.findOne({_id: Meteor.user().currentRoom}).players.length && !correct) {
+				clueActiveHandle = Meteor.setInterval(function() {
+					console.log('fag');
+					Rooms.update({_id: gameid},
+						{$inc: {
+							clueActiveTimer: -1
+						}
+					});
 
-			
-		
+					if (Rooms.findOne({_id: gameid}).clueActiveTimer == 0) {
+						Meteor.clearInterval(clueActiveHandle);
+
+						Rooms.update({_id: gameid}, {
+							$set:{
+									currentState: 5,
+									correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer,
+									currentAnswerCorrect: false
+							   	  }
+						});	
+
+						Meteor.setTimeout(function() {
+							Rooms.update({_id: gameid},
+							{	$set: {
+								currentState: 1,
+								answeringPlayer: null,
+								activePlayer: playerid,
+								"activeClue.question": null,
+								"activeClue.answer": null,
+								"activeClue.worth": null,
+								"activeClue.category": null,
+								currentPlayerAnswer: null,
+								currentAnswerCorrect: null,
+								correctAnswer: null,
+								clueActiveTimer: 5
+								},
+
+								$inc: {
+								cluesDone: 1
+								}
+							});
+
+							for (i = 0; i < Rooms.findOne({_id: gameid}).players.length; i++) {
+								var qincorrect = "players." + i + ".incorrect";
+								var updateIncorrect = {};
+								updateIncorrect[qincorrect] = false;
+								Rooms.update({_id: gameid}, {
+									$set: updateIncorrect
+									});
+							}	
+						}, 1000);
+						
+						Meteor.setTimeout(function() {
+							if (Rooms.findOne({_id: gameid}).cluesDone == 3) {
+							Rooms.update({_id: gameid}, {
+								$set: {
+									currentState: 7,
+									answeringPlayer: null,
+									activePlayer: playerid,
+									"activeClue.question": null,
+									"activeClue.answer": null,
+									"activeClue.worth": null,
+									"activeClue.category": null,
+									currentPlayerAnswer: null,
+									currentAnswerCorrect: null,
+									correctAnswer: null
+								}
+							});
+
+							var max = -999999;
+							for (i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
+								if (Rooms.findOne({_id: gameid}).players[i].money > max){
+									max = Rooms.findOne({_id: gameid}).players[i].money;
+								}
+							}
+
+							for (i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
+								if (Rooms.findOne({_id: gameid}).players[i].money == max) {
+									var q = "players." + i + ".isWinner";
+									var updateWin = {};		
+									updateWin[q] = true;
+
+							Rooms.update({_id: gameid}, {
+								$set: updateWin
+								});				
+							}
+						}
+
+							for (i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
+									var qmoney = "players." + i + ".incorrect";
+									var updateMoney = {};
+									updateMoney[qmoney] = 0;
+									Rooms.update({_id: gameid}, {
+										$set: updateMoney
+									});
+								}
+						}}, 2300);
+					}
+
+				}, 1000);
+		}
+
 	},
 
 	toggleReady: function() {
@@ -742,7 +925,6 @@ Meteor.methods({
 
 		}
 	}
-
 
 });
 

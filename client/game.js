@@ -4,3 +4,6 @@ Template.game.helpers({
 	}
 });
 
+Meteor.setInterval(function() {
+	Meteor.call("ping");
+}, 5000);

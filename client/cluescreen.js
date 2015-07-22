@@ -148,6 +148,8 @@ Template.cluescreen.events({
 
 });
 
+
+ 
 /* states
 
 0: pregame

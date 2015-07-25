@@ -18,9 +18,10 @@ for i in range(2542, 2543):
 
 	for category in range(1, 6):
 		for clue in range(1, 5):
-			if soup.find(id="clue_J_" + str(category) + "_" + str(clue)) == None:
+			clueid = "clue_J_" + str(category) + "_" + str(clue))
+			if soup.find(id=clueid) == None or "a href" in str(soup.find(clueid):
 				print i
 				print category
-				print clue
+				print clued
 	#if "a href" in str(soup.find(id="clue_J_1_1")):
 	print type(str(soup.find(id="clue_J_1_1")))

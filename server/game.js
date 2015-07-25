@@ -1,6 +1,6 @@
-EasySecurity.config({
-  ignoredMethods: ['roomCleanup', 'ping']
-});
+// EasySecurity.config({
+//   ignoredMethods: ['roomCleanup', 'ping']
+// });
 
 Meteor.setInterval(function() {
 	Meteor.call("roomCleanup");

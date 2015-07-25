@@ -12,33 +12,33 @@ Meteor.publish("rooms", function() {
 })
 
 Meteor.publish("currentRoom", function(id) {
-	for (i = 0; i < Rooms.findOne({_id: id}).players.length; i++) {
-		if (this.userId == Rooms.findOne({_id: id}).players[i].playerid) {
-				return Rooms.find({_id: id}, {
-					fields: {
-						players: true,
-						"activeClue.question": true,
-						"activeClue.worth": true,
-						"activeClue.category": true,
-						activePlayer: true,
-						currentState: true,
-						"clues.category": true,
-						"clues.clues.selected": true,
-						ownerId: true,
-						answeringPlayer: true,
-						currentPlayerAnswer: true,
-						currentAnswerCorrect: true,
-						correctAnswer: true,
-						roomplayers: true,
-						cluePickTimer: true,
-						answerTimer: true,
-						clueActiveTimer: true,
-						buzzTimer: true,
-						cluesDone: true
-					}
-				});
-			}
+	// for (i = 0; i < Rooms.findOne({_id: id}).players.length; i++) {
+	// 	if (this.userId == Rooms.findOne({_id: id}).players[i].playerid) {
+	return Rooms.find({_id: id}, {
+		fields: {
+			players: true,
+			"activeClue.question": true,
+			"activeClue.worth": true,
+			"activeClue.category": true,
+			activePlayer: true,
+			currentState: true,
+			"clues.category": true,
+			"clues.clues.selected": true,
+			ownerId: true,
+			answeringPlayer: true,
+			currentPlayerAnswer: true,
+			currentAnswerCorrect: true,
+			correctAnswer: true,
+			roomplayers: true,
+			cluePickTimer: true,
+			answerTimer: true,
+			clueActiveTimer: true,
+			buzzTimer: true,
+			cluesDone: true
 		}
+	});
+		// 	}
+		// }
 
-	return Rooms.find({_id: null});
+	//return Rooms.find({_id: null});
 	});

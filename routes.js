@@ -11,7 +11,7 @@ Router.route("rooms", {path: "/rooms",
 Router.route("/rooms/:_id", {
 	action: function() {
 
-		
+		  
 		this.render("game");
 
 		this.render("board", {
@@ -55,7 +55,7 @@ Router.route("/rooms/:_id", {
 		Meteor.call("playerLeave");
 	},
 
-	waitOn: function() {
+	subscriptions: function() {
 		return Meteor.subscribe("currentRoom", this.params._id);
 	}
 

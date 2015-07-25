@@ -6,4 +6,9 @@ Template.game.helpers({
 
 Meteor.setInterval(function() {
 	Meteor.call("ping");
-}, 5000);
+}, 500);
+
+
+// Meteor.setInterval(function() {
+// 	if (Meteor.user().currentRoom)
+// })

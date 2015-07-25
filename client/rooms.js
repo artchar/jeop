@@ -58,7 +58,7 @@ Template.rooms.events({
 		var playerid = Meteor.userId();
 		var playerName = Meteor.user().username;
 		Session.set("loading", true);
-		Meteor.call("joinRoom", playerid, playerName, gameid);
+		Meteor.call("joinRoom", gameid);
 		
 		Meteor.setTimeout(function() {
 			Router.go("/rooms/" + gameid);

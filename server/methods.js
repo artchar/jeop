@@ -250,6 +250,10 @@ Meteor.methods({
 					}
 				});
 
+				if (Rooms.findOne({_id: gameid}) == undefined) {
+					Meteor.clearInterval(clueActiveHandle);
+				}
+
 				if (Rooms.findOne({_id: gameid}).clueActiveTimer == 0) {
 					Meteor.clearInterval(clueActiveHandle);
 
@@ -338,12 +342,12 @@ Meteor.methods({
 	//Enter state 5
 	buzzIn: function() {
 
+		Meteor.clearInterval(clueActiveHandle);
 
 		var gameid = Meteor.user().currentRoom;
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == null || Rooms.findOne({_id: Meteor.user().currentState}) == 5)
 			return;
 
-		Meteor.clearInterval(clueActiveHandle);
 
 
 		Rooms.update({_id: Meteor.user().currentRoom},
@@ -745,7 +749,7 @@ Meteor.methods({
 	},
 
 	playerLeave: function() {
-		if (Meteor.user().currentRoom == null) {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == undefined || Meteor.user().currentRoom == null) {
 			return;
 		}
 
@@ -827,7 +831,7 @@ Meteor.methods({
 	},
 
 	roomCleanup: function() {
-		var rooms = Rooms.find({roomplayers: 0});
+		var rooms = Rooms.find({roomplayers: {$lte: 0}});
 
 		rooms.forEach(function(room) {
 			Rooms.remove({_id: room._id});
@@ -930,7 +934,7 @@ Meteor.methods({
 		var now = new Date().getTime();
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
-			if (now - player.lastPing > 9000) {
+			if (now - player.lastPing > 9000 && !player.loggedIn) {
 
 				if (player.currentRoom != null || player.currentRoom != undefined) {
 					var room = player.currentRoom;
@@ -995,13 +999,13 @@ Meteor.methods({
 					{$set: setReady
 					 }
 					);
-				var handle2 = Meteor.setInterval(function() {
+				var handle3 = Meteor.setInterval(function() {
 					if (Rooms.findOne({_id: gameId}).roomplayers != p) {
 
 						Meteor.users.update({_id: userId},
 							{$set: {currentRoom: null, playerSlot: null}
 						});
-						Meteor.clearInterval(handle2);
+						Meteor.clearInterval(handle3);
 					}
 					else{
 						return;

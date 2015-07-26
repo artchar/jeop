@@ -1,5 +1,5 @@
 var han2dle = "HH";
-
+var submitted = false;
 Template.cluescreen.helpers({
 	activeClue: function() {
 		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
@@ -78,9 +78,14 @@ Template.cluescreen.helpers({
 	},
 
 	answerTimer: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer == Meteor.userId()) {
+
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer == Meteor.userId() && !submitted) {
 			if (Rooms.findOne({_id: Meteor.user().currentRoom}).answerTimer == 0) {
 				$("#answer-form").submit();
+				submitted = true;
+				Meteor.setTimeout(function() {
+					submitted = false;
+				}, 2000);
 				return ":00";
 			}
 			return ":0" + Rooms.findOne({_id: Meteor.user().currentRoom}).answerTimer;
@@ -126,6 +131,8 @@ Template.cluescreen.events({
 		Meteor.setTimeout(function() {
 			Meteor.call("checkAnswer", answer);
 		}, 1200);
+
+		console.log("Ab");
 
 		Meteor.setTimeout(function() {
 			$("#answer-form").show();

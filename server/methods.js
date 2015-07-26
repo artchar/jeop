@@ -1,6 +1,8 @@
 var answerTimerHandle;
 var clueActiveHandle;
 
+
+
 Meteor.methods({
 
 	addRoom:function(roomName, roomPassword) {
@@ -161,6 +163,9 @@ Meteor.methods({
 		var activeClueWorth;
 
 		var gameid = Meteor.user().currentRoom;
+
+		Meteor.clearInterval(answerTimerHandle);
+		Meteor.clearInterval(clueActiveHandle);
 
 
 		switch (parseInt(clue)) {
@@ -342,10 +347,13 @@ Meteor.methods({
 	//Enter state 5
 	buzzIn: function() {
 
+		Meteor.clearInterval(answerTimerHandle);
 		Meteor.clearInterval(clueActiveHandle);
 
 		var gameid = Meteor.user().currentRoom;
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == null || Rooms.findOne({_id: Meteor.user().currentState}) == 5)
+
+		var activeTime = Rooms.findOne({_id: gameid}).clueActiveTimer;
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == null || Rooms.findOne({_id: gameid}).currentState == 5 || activeTime == 0)
 			return;
 
 
@@ -634,6 +642,7 @@ Meteor.methods({
 
 					if (Rooms.findOne({_id: gameid}).clueActiveTimer == 0) {
 						Meteor.clearInterval(clueActiveHandle);
+						console.log("klp");
 
 						Rooms.update({_id: gameid}, {
 							$set:{
@@ -648,7 +657,7 @@ Meteor.methods({
 							{	$set: {
 								currentState: 1,
 								answeringPlayer: null,
-								activePlayer: playerid,
+								//activePlayer: playerid,
 								"activeClue.question": null,
 								"activeClue.answer": null,
 								"activeClue.worth": null,
@@ -680,7 +689,7 @@ Meteor.methods({
 								$set: {
 									currentState: 7,
 									answeringPlayer: null,
-									activePlayer: playerid,
+					//				activePlayer: playerid,
 									"activeClue.question": null,
 									"activeClue.answer": null,
 									"activeClue.worth": null,
@@ -839,6 +848,9 @@ Meteor.methods({
 	},
 
 	newGame: function() {
+
+		Meteor.clearInterval(answerTimerHandle);
+		Meteor.clearInterval(clueActiveHandle);
 		var CATEGORIES_PER_GAME = 6;
 		var randoms = [];
 		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
@@ -1000,6 +1012,8 @@ Meteor.methods({
 					 }
 					);
 				var handle3 = Meteor.setInterval(function() {
+					if (Rooms.findOne({_id: gameId}) === undefined)
+						return;
 					if (Rooms.findOne({_id: gameId}).roomplayers != p) {
 
 						Meteor.users.update({_id: userId},

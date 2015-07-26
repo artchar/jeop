@@ -288,7 +288,7 @@ Meteor.methods({
 					}, 1000);
 					
 					Meteor.setTimeout(function() {
-						if (Rooms.findOne({_id: gameid}).cluesDone == 3) {
+						if (Rooms.findOne({_id: gameid}).cluesDone == 5) {
 						Rooms.update({_id: gameid}, {
 							$set: {
 								currentState: 7,
@@ -452,7 +452,7 @@ Meteor.methods({
 					}
 
 
-				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 3) {
+				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 5) {
 					Meteor._sleepForMs(1000);
 					var max = -999999;
 					for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
@@ -576,7 +576,7 @@ Meteor.methods({
 			}
 
 
-				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 3) {
+				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 5) {
 					Meteor._sleepForMs(1000);
 					var max = -999999;
 					for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
@@ -675,7 +675,7 @@ Meteor.methods({
 						}, 1000);
 						
 						Meteor.setTimeout(function() {
-							if (Rooms.findOne({_id: gameid}).cluesDone == 3) {
+							if (Rooms.findOne({_id: gameid}).cluesDone == 5) {
 							Rooms.update({_id: gameid}, {
 								$set: {
 									currentState: 7,

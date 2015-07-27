@@ -15,39 +15,46 @@ Meteor.methods({
 	// Pull random clue categories from the db
 		var CATEGORIES_PER_GAME = 6;
 		var randoms = [];
+
+		var clueCount = Clues.find().count();
 		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
-			var rand = Math.floor(Math.random() * Clues.find().count());
+			var rand = Math.floor(Math.random() * clueCount);
+			while (_.contains(randoms, rand)) {
+				rand = Math.floor(Math.random() * clueCount);
+			}
 			randoms.push(rand);
 		}
 
 		var clueArray = [];
 
 		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
+			var c = Clues.find().fetch()[randoms[i]];
 			clueArray.push({
-				category: Clues.find().fetch()[randoms[i]].category,
+				category: c.category,
+				comments: c.comments,
 				clues: [{
-					question: Clues.find().fetch()[randoms[i]].clues[0].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[0].answer,
+					question: c.clues[0].question,
+					answer: c.clues[0].answer,
 					selected: false
 				},
 				{
-					question: Clues.find().fetch()[randoms[i]].clues[1].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[1].answer,
+					question: c.clues[1].question,
+					answer: c.clues[1].answer,
 					selected: false
 				},
 				{
-					question: Clues.find().fetch()[randoms[i]].clues[2].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[2].answer,
+					question: c.clues[2].question,
+					answer: c.clues[2].answer,
 					selected: false
 				},
 				{
-					question: Clues.find().fetch()[randoms[i]].clues[3].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[3].answer,
+					question: c.clues[3].question,
+					answer: c.clues[3].answer,
 					selected: false
 				},
 				{
-					question: Clues.find().fetch()[randoms[i]].clues[4].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[4].answer,
+					question: c.clues[4].question,
+					answer: c.clues[4].answer,
 					selected: false
 				}]
 			});

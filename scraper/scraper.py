@@ -19,24 +19,33 @@ for i in range(2542, 2600):
 	url = "http://www.j-archive.com/showgame.php?game_id=" + str(i)
 	html = urllib2.urlopen(url)
 
-	soup = BeautifulSoup(html, 'html.parser')
+	soup = BeautifulSoup(html, 'lxml')
 
 	# Get categories that don't have 5 clues
 	dontuse = []
 
 	for category in range(1, 7):
 		clueIterate(dontuse, category, soup)
+
 	
 	for category in range(1, 7):
 		if category in dontuse:
 			continue
 
-		cat = soup.findAll(class_="category_name")[category].contents[0]
-		catComments = soup.findAll(class_="category_comments")[category].contents[0]	
+		cat = soup.findAll(class_="category_name")[category-1].contents[0]
+		cor = soup.find("div", onmouseover=True).get("onmouseover")
+		cor = BeautifulSoup(cor, "lxml")
+		cor = cor.find(class_="correct_response")
+		print cor
+		if soup.findAll(class_="category_comments")[category-1].contents != []:
+			catComments = soup.findAll(class_="category_comments")[category-1].contents[0]
+		else:
+			catComments = ""
 		
 		for clue in range(1, 6):
 			clueid = "clue_J_" + str(category) + "_" + str(clue)
 		print cat
+		print catComments
 
 
 

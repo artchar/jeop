@@ -758,7 +758,7 @@ Meteor.methods({
 	},
 
 	playerLeave: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == undefined || Meteor.user().currentRoom == null) {
+		if (Meteor.user() == null || Rooms.findOne({_id: Meteor.user().currentRoom}) == undefined || Meteor.user().currentRoom == null) {
 			return;
 		}
 

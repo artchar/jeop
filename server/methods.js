@@ -96,7 +96,7 @@ Meteor.methods({
 			correctAnswer: null,
 
 			cluePickTimer: 5,
-			answerTimer: 7,
+			answerTimer: 9,
 			clueActiveTimer: 5,
 			buzzTimer: 30
 
@@ -394,7 +394,7 @@ Meteor.methods({
 		Meteor.clearInterval(answerTimerHandle);
 		Rooms.update({_id: Meteor.user().currentRoom}, {
 			$set:{
-				answerTimer: 7
+				answerTimer: 9
 			 	  }
 		});	
 
@@ -916,7 +916,7 @@ Meteor.methods({
 				correctAnswer: null,
 
 				cluePickTimer: 8,
-				answerTimer: 7,
+				answerTimer: 9,
 				clueActiveTimer: 5,
 				buzzTimer: 30
 

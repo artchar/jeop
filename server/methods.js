@@ -234,6 +234,8 @@ Meteor.methods({
 			});
 
 			var buzz = Meteor.setInterval(function() {
+				if (Rooms.findOne({_id: gameid}) == undefined)
+					Meteor.clearInterval(buzz);
 				if (Rooms.findOne({_id: gameid}).buzzTimer == 0) {
 					Meteor.clearInterval(buzz);
 					Rooms.update({_id: gameid},
@@ -974,6 +976,8 @@ Meteor.methods({
 				if (player.currentRoom != null || player.currentRoom != undefined) {
 					var room = player.currentRoom;
 
+					if (Rooms.findOne({_id: room}) == undefined)
+						return;
 					if (player._id == Rooms.findOne({_id: room}).ownerId){
 						if (Rooms.findOne({_id: room}).roomplayers > 1) {
 							Rooms.update({_id: room}, 

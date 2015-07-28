@@ -141,11 +141,10 @@ Template.cluescreen.events({
 			Meteor.call("checkAnswer", answer);
 		}, 1200);
 
-		console.log("Ab");
 
 		Meteor.setTimeout(function() {
 			$("#answer-form").show();
-		}, 4000);
+		}, 5000);
 	},
 
 	"click #buzzer": function(event) {

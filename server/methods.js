@@ -395,7 +395,7 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
-		var regex = /[' "!@#$%^&*()\/\\-_,.]/g;
+		var regex = /[' "!@#$%^&*()\/\\-_,.;]and/g;
 		var cleanedAnswer = answer.replace(regex, "");
 		cleanedAnswer = cleanedAnswer.toLowerCase();
 

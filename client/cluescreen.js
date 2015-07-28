@@ -139,12 +139,12 @@ Template.cluescreen.events({
 
 		Meteor.setTimeout(function() {
 			Meteor.call("checkAnswer", answer);
-		}, 1200);
+		}, 1000);
 
 
 		Meteor.setTimeout(function() {
 			$("#answer-form").show();
-		}, 5000);
+		}, 6000);
 	},
 
 	"click #buzzer": function(event) {

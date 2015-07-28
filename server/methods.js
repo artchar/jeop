@@ -1,6 +1,8 @@
 var answerTimerHandle;
 var clueActiveHandle;
 
+var cheerio = Meteor.npmRequire('cheerio');
+
 
 
 Meteor.methods({
@@ -276,7 +278,7 @@ Meteor.methods({
 					Rooms.update({_id: gameid}, {
 						$set:{
 								currentState: 5,
-								correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer,
+								correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer[0],
 								currentAnswerCorrect: null
 						   	  }
 					});	
@@ -395,9 +397,17 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
+
+		var s = HTTP.get("http://www.ask.com/web?q=" + answer);
+		var $ = cheerio.load(s.content);
+		var spellCheckedAnswer = $('.spell-check-link').text();
+		spellCheckedAnswer = spellCheckedAnswer.substr(0, spellCheckedAnswer.length-1);
+
 		var regex = /[' "!@#$%^&*()\/\\-_,.;]and/g;
 		var cleanedAnswer = answer.replace(regex, "");
 		cleanedAnswer = cleanedAnswer.toLowerCase();
+		spellCheckedAnswer = spellCheckedAnswer.replace(regex, "");
+		spellCheckedAnswer = spellCheckedAnswer.toLowerCase();
 
 		var realAnswers = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer;
 
@@ -405,13 +415,6 @@ Meteor.methods({
 			realAnswers[i] = realAnswers[i].replace(regex, "");
 			realAnswers[i] = realAnswers[i].toLowerCase();
 		}
-		// realAnswers.forEach(function(answer) {
-		// 	answer = answer.replace(regex, "");
-		// 	answer = answer.toLowerCase();
-		// });
-		// var cleanedReal = realAnswers.replace(regex, "");
-		// cleanedReal = cleanedReal.toLowerCase();
-
 
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
@@ -419,9 +422,13 @@ Meteor.methods({
 
 		if (_.contains(realAnswers, cleanedAnswer))
 			correct = true;
+		else if (_.contains(realAnswers, spellCheckedAnswer))
+			correct = true;
+
 
 		if(Rooms.findOne({_id: gameid}).currentPlayerAnswer != null)
 			return;
+
 
 
 		Meteor.clearInterval(answerTimerHandle);
@@ -438,7 +445,7 @@ Meteor.methods({
 					$set:{
 							currentPlayerAnswer: answer,
 							currentAnswerCorrect: true,
-							correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer
+							correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer[0]
 					   	  },
 					$inc:{
 							cluesDone: 1
@@ -581,7 +588,7 @@ Meteor.methods({
 					Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set: {
 						currentState: 3,
-						correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer
+						correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer[0]
 					},
 					$inc: {cluesDone: 1}
 				});
@@ -679,7 +686,7 @@ Meteor.methods({
 						Rooms.update({_id: gameid}, {
 							$set:{
 									currentState: 5,
-									correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer,
+									correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer[0],
 									currentAnswerCorrect: false
 							   	  }
 						});	

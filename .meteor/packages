@@ -13,3 +13,8 @@ accounts-ui
 jquery
 sacha:spin
 underscore
+http
+meteorhacks:npm
+
+
+npm-container

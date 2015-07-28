@@ -105,6 +105,15 @@ Template.cluescreen.helpers({
 			return "lightup";
 		}
 		else return "";
+	},
+
+	currentClueComments: function() {
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
+			return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.comments;
+		}
+		else {
+			return "";
+		}
 	}
 
 });

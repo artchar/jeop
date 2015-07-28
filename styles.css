@@ -19,7 +19,9 @@
 	border: 2px solid black;
 }
 
-
+.comments {
+	font-size: .5em;
+}
 
 .btn-category {
 	font-size: 100%;

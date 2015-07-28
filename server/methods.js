@@ -83,6 +83,7 @@ Meteor.methods({
 			// Category and clue indexes help check if a given answer is correct
 			activeClue: {
 				category: null,
+				comments: null,
 				question: null,
 				answer: null,
 				worth: null
@@ -196,12 +197,14 @@ Meteor.methods({
 		}
 
 		var activeClueCategory = Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].category;
+		var activeClueComments = Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].comments
 
 		Rooms.update({_id: Meteor.user().currentRoom},
 			{$set: {
 				currentState: 2,
 				"activeClue.worth": activeClueWorth,
-				"activeClue.category": activeClueCategory
+				"activeClue.category": activeClueCategory,
+				"activeClue.comments": activeClueComments
 			}
 		});
 
@@ -286,6 +289,7 @@ Meteor.methods({
 							"activeClue.answer": null,
 							"activeClue.worth": null,
 							"activeClue.category": null,
+							"activeClue.comments": null,
 							currentPlayerAnswer: null,
 							currentAnswerCorrect: null,
 							correctAnswer: null,
@@ -309,6 +313,7 @@ Meteor.methods({
 								"activeClue.answer": null,
 								"activeClue.worth": null,
 								"activeClue.category": null,
+								"activeClue.comments": null,
 								currentPlayerAnswer: null,
 								currentAnswerCorrect: null,
 								correctAnswer: null
@@ -456,6 +461,7 @@ Meteor.methods({
 						"activeClue.answer": null,
 						"activeClue.worth": null,
 						"activeClue.category": null,
+						"activeClue.comments": null,
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null,
@@ -504,6 +510,7 @@ Meteor.methods({
 						"activeClue.answer": null,
 						"activeClue.worth": null,
 						"activeClue.category": null,
+						"activeClue.comments": null,
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null
@@ -577,6 +584,7 @@ Meteor.methods({
 						"activeClue.answer": null,
 						"activeClue.worth": null,
 						"activeClue.category": null,
+						"activeClue.comments": null,
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null,
@@ -627,6 +635,7 @@ Meteor.methods({
 						"activeClue.answer": null,
 						"activeClue.worth": null,
 						"activeClue.category": null,
+						"activeClue.comments": null,
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null
@@ -673,6 +682,7 @@ Meteor.methods({
 								"activeClue.answer": null,
 								"activeClue.worth": null,
 								"activeClue.category": null,
+								"activeClue.comments": null,
 								currentPlayerAnswer: null,
 								currentAnswerCorrect: null,
 								correctAnswer: null,
@@ -705,6 +715,7 @@ Meteor.methods({
 									"activeClue.answer": null,
 									"activeClue.worth": null,
 									"activeClue.category": null,
+									"activeClue.comments": null,
 									currentPlayerAnswer: null,
 									currentAnswerCorrect: null,
 									correctAnswer: null
@@ -910,6 +921,7 @@ Meteor.methods({
 
 				// Category and clue indexes help check if a given answer is correct
 				"activeClue.category": null,
+				"activeClue.comments": null,
 				"activeClue.question": null,
 				"activeClue.answer": null,
 				"activeClue.worth": null,

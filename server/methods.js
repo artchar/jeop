@@ -395,20 +395,30 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
-		var regex = /[' "!@#$%^&*()\/\\-_]/g;
+		var regex = /[' "!@#$%^&*()\/\\-_,.]/g;
 		var cleanedAnswer = answer.replace(regex, "");
 		cleanedAnswer = cleanedAnswer.toLowerCase();
 
-		var realAnswer = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer[0];
-		var cleanedReal = realAnswer.replace(regex, "");
-		cleanedReal = cleanedReal.toLowerCase();
+		var realAnswers = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer;
 
-		console.log(cleanedAnswer);
-		console.log(cleanedReal);
+		for (i = 0; i < realAnswers.length; i++) {
+			realAnswers[i] = realAnswers[i].replace(regex, "");
+			realAnswers[i] = realAnswers[i].toLowerCase();
+		}
+		// realAnswers.forEach(function(answer) {
+		// 	answer = answer.replace(regex, "");
+		// 	answer = answer.toLowerCase();
+		// });
+		// var cleanedReal = realAnswers.replace(regex, "");
+		// cleanedReal = cleanedReal.toLowerCase();
+
 
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
-		var correct;
+		var correct = false;
+
+		if (_.contains(realAnswers, cleanedAnswer))
+			correct = true;
 
 		if(Rooms.findOne({_id: gameid}).currentPlayerAnswer != null)
 			return;
@@ -422,8 +432,8 @@ Meteor.methods({
 		});	
 
 		// Correct
-		if(cleanedAnswer == cleanedReal) {
-			correct = true;
+		if(correct) {
+			//correct = true;
 			Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set:{
 							currentPlayerAnswer: answer,
@@ -448,7 +458,7 @@ Meteor.methods({
 
 		Meteor._sleepForMs(3000);
 
-		if(cleanedAnswer == cleanedReal) {	// CORRECT
+		if(correct) {	// CORRECT
 				var slot = Meteor.user().playerSlot;
 				var q = "players." + slot + ".money";
 				var updateMoney = {};

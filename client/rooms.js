@@ -33,17 +33,17 @@ Template.rooms.events({
 		Meteor.apply("addRoom", [roomName, roomPassword, Meteor.userId()], true, function(err, result){
 			gameid = result;
 		});
-
-		var handle = Meteor.setInterval(function() {
-			if (gameid != undefined) {
-				Router.go("/rooms/" + gameid);
-				Meteor.clearInterval(handle);
-			}
-			else{
-				return;
-			}
-		}, 5);
-			
+		Meteor.setTimeout(function() {
+			var handle = Meteor.setInterval(function() {
+				if (gameid != undefined) {
+					Router.go("/rooms/" + gameid);
+					Meteor.clearInterval(handle);
+				}
+				else{
+					return;
+				}
+			}, 5);
+			}, 5000);
 
 	},
 

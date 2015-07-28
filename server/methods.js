@@ -236,7 +236,6 @@ Meteor.methods({
 					Rooms.update({_id: gameid},
 						{$set: {buzzTimer: 30}});
 				}
-				console.log(Rooms.findOne({_id: gameid}).buzzTimer);
 				Rooms.update({_id: gameid},
 					{$inc: {
 						buzzTimer: -1
@@ -389,6 +388,16 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
+		var regex = /[' "!@#$%^&*()]/g;
+		var cleanedAnswer = answer.replace(regex, "");
+		cleanedAnswer = cleanedAnswer.toLowerCase();
+
+		var realAnswer = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer[0];
+		var cleanedReal = realAnswer.replace(regex, "");
+		cleanedReal = cleanedReal.toLowerCase();
+
+		console.log(cleanedAnswer);
+		console.log(cleanedReal);
 
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
@@ -406,7 +415,7 @@ Meteor.methods({
 		});	
 
 		// Correct
-		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {
+		if(cleanedAnswer == cleanedReal) {
 			correct = true;
 			Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set:{
@@ -432,8 +441,7 @@ Meteor.methods({
 
 		Meteor._sleepForMs(2000);
 
-		if(answer == Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer) {	// CORRECT
-				console.log("correct!");
+		if(cleanedAnswer == cleanedReal) {	// CORRECT
 				var slot = Meteor.user().playerSlot;
 				var q = "players." + slot + ".money";
 				var updateMoney = {};
@@ -457,7 +465,6 @@ Meteor.methods({
 				});
 
 				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
-						console.log("AS2ASFAS");
 						var qmoney = "players." + i + ".incorrect";
 						var updateMoney = {};
 						updateMoney[qmoney] = false;
@@ -504,7 +511,6 @@ Meteor.methods({
 				});
 
 				for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
-						console.log("AS2ASFAS");
 						var qmoney = "players." + i + ".incorrect";
 						var updateMoney = {};
 						updateMoney[qmoney] = false;
@@ -640,7 +646,6 @@ Meteor.methods({
 
 			if (incorrectCount != Rooms.findOne({_id: Meteor.user().currentRoom}).players.length && !correct) {
 				clueActiveHandle = Meteor.setInterval(function() {
-					console.log('fag');
 					Rooms.update({_id: gameid},
 						{$inc: {
 							clueActiveTimer: -1
@@ -649,7 +654,6 @@ Meteor.methods({
 
 					if (Rooms.findOne({_id: gameid}).clueActiveTimer == 0) {
 						Meteor.clearInterval(clueActiveHandle);
-						console.log("klp");
 
 						Rooms.update({_id: gameid}, {
 							$set:{

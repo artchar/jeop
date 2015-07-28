@@ -24,7 +24,7 @@ def clueIterate(dontuse, cat, soup, round):
 
 
 # Loop through games
-for i in range(2348, 2581):
+for i in range(3498, 3509):
 	url = "http://www.j-archive.com/showgame.php?game_id=" + str(i)
 	html = urllib2.urlopen(url)
 
@@ -33,7 +33,7 @@ for i in range(2348, 2581):
 	if soup.find(class_="category_name") == None:
 		continue
 	
-	filename = str(i) + ".json"
+	filename = "clues/" + str(i) + ".json"
 	fd = open(filename, "w")
 
 

@@ -104,7 +104,7 @@ Meteor.methods({
 
 			cluePickTimer: 5,
 			answerTimer: 9,
-			clueActiveTimer: 5,
+			clueActiveTimer: 9,
 			buzzTimer: 30
 
 
@@ -289,7 +289,7 @@ Meteor.methods({
 							currentPlayerAnswer: null,
 							currentAnswerCorrect: null,
 							correctAnswer: null,
-							clueActiveTimer: 5
+							clueActiveTimer: 9
 							},
 
 							$inc: {
@@ -459,7 +459,7 @@ Meteor.methods({
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null,
-						clueActiveTimer: 5
+						clueActiveTimer: 9
 					},
 				 	$inc: updateMoney
 				});
@@ -580,7 +580,7 @@ Meteor.methods({
 						currentPlayerAnswer: null,
 						currentAnswerCorrect: null,
 						correctAnswer: null,
-						clueActiveTimer: 5
+						clueActiveTimer: 9
 					}
 				});
 
@@ -676,7 +676,7 @@ Meteor.methods({
 								currentPlayerAnswer: null,
 								currentAnswerCorrect: null,
 								correctAnswer: null,
-								clueActiveTimer: 5
+								clueActiveTimer: 9
 								},
 
 								$inc: {
@@ -928,7 +928,7 @@ Meteor.methods({
 
 				cluePickTimer: 8,
 				answerTimer: 9,
-				clueActiveTimer: 5,
+				clueActiveTimer: 9,
 				buzzTimer: 30
 
 		}

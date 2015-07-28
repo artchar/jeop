@@ -188,3 +188,7 @@ hr {
 .player-answering {
 	border: 3.5px solid yellow;
 }
+
+h1 {
+	text-shadow: 0 0 4px #ADD8E6;
+}

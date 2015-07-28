@@ -299,7 +299,7 @@ Meteor.methods({
 					}, 1000);
 					
 					Meteor.setTimeout(function() {
-						if (Rooms.findOne({_id: gameid}).cluesDone == 5) {
+						if (Rooms.findOne({_id: gameid}).cluesDone == 30) {
 						Rooms.update({_id: gameid}, {
 							$set: {
 								currentState: 7,
@@ -388,7 +388,7 @@ Meteor.methods({
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(answer) {
 
-		var regex = /[' "!@#$%^&*()]/g;
+		var regex = /[' "!@#$%^&*()\/\\-_]/g;
 		var cleanedAnswer = answer.replace(regex, "");
 		cleanedAnswer = cleanedAnswer.toLowerCase();
 
@@ -474,7 +474,7 @@ Meteor.methods({
 					}
 
 
-				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 5) {
+				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 30) {
 					Meteor._sleepForMs(1000);
 					var max = -999999;
 					for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
@@ -597,7 +597,7 @@ Meteor.methods({
 			}
 
 
-				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 5) {
+				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 30) {
 					Meteor._sleepForMs(1000);
 					var max = -999999;
 					for (i = 0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
@@ -695,7 +695,7 @@ Meteor.methods({
 						}, 1000);
 						
 						Meteor.setTimeout(function() {
-							if (Rooms.findOne({_id: gameid}).cluesDone == 5) {
+							if (Rooms.findOne({_id: gameid}).cluesDone == 30) {
 							Rooms.update({_id: gameid}, {
 								$set: {
 									currentState: 7,

@@ -58,7 +58,9 @@
 
 .game-board {
 	margin: 0 auto;
+	margin-top: 1em;
 	background-color: gray;
+	border-top: 4px solid black;
 	border-right: 2px solid black;
 	border-left: 4px solid black;
 	border-bottom: 4px solid black;
@@ -70,8 +72,10 @@
 }
 
 .clue-screen {
+	margin-top: 1em;
 	color: white;
 	background-color:gray;
+	border-top: 4px solid black;
 	border-right: 4px solid black;
 	border-left: 2px solid black;
 	border-bottom: 4px solid black;
@@ -79,7 +83,7 @@
 }
 
 .lightup {
-	border: 2px dashed orange;
+	border: 1px dashed yellow;
 }
 
 .player-box {

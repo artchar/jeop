@@ -9,12 +9,11 @@
 // // Add the rule, allowing up to 1 call every 2 seconds
 // DDPRateLimiter.addRule(checkAnswerLimit, 1, 2000);
 
-// EasySecurity.config({
-//   general: { type: 'rateLimit', ms: 1500 },
-//   methods: {
-//     joinRoom: { type: 'rateLimit', ms: 1000 },
-//     clickClue: { type: 'rateLimit', ms: 300 }
-//   },
-//   ignoredMethods: ['playerCleanup', 'roomCleanup', 'ping', 'playerLeave', 'login'],
-//   maxQueueLength: 200
-// });
+EasySecurity.config({
+  methods: {
+    joinRoom: { type: 'rateLimit', ms: 1000 },
+    checkAnswer: {type: 'rateLimit', ms: 2350}
+  },
+  ignoredMethods: ['playerCleanup', 'roomCleanup', 'ping', 'playerLeave', 'login', 'clickClue'],
+  maxQueueLength: 200
+});

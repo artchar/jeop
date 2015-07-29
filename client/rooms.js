@@ -5,7 +5,7 @@ Template.rooms.helpers({
 	},
 
 	roomsList: function() {
-		return Rooms.find();
+		return Rooms.find({roomplayers: {$lt: 6}}, {sort: {roomName: 1}});
 	},
 
 	redir: function() {

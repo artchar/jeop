@@ -4,6 +4,22 @@ var clueActiveHandle;
 var cheerio = Meteor.npmRequire('cheerio');
 
 
+// Call to get an array of 6 random numbers that index clue categories for each game
+function randomCategories() {
+	var CATEGORIES_PER_GAME = 6;
+	var randoms = [];
+
+	var clueCount = Clues.find().count();
+	for (i = 0; i < CATEGORIES_PER_GAME; i++) {
+		var rand = Math.floor(Math.random() * clueCount);
+		while (_.contains(randoms, rand)) {
+			rand = Math.floor(Math.random() * clueCount);
+		}
+		randoms.push(rand);
+	}
+	return randoms;
+}
+
 
 Meteor.methods({
 
@@ -15,19 +31,11 @@ Meteor.methods({
 		var playerid = Meteor.userId();
 		var roomOwner = Meteor.user().username;
 	// Pull random clue categories from the db
-		var CATEGORIES_PER_GAME = 6;
-		var randoms = [];
 
-		var clueCount = Clues.find().count();
-		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
-			var rand = Math.floor(Math.random() * clueCount);
-			while (_.contains(randoms, rand)) {
-				rand = Math.floor(Math.random() * clueCount);
-			}
-			randoms.push(rand);
-		}
+		var randoms = randomCategories();
 
 		var clueArray = [];
+		var CATEGORIES_PER_GAME = 6;
 
 		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
 			var c = Clues.find().fetch()[randoms[i]];
@@ -126,7 +134,7 @@ Meteor.methods({
 
 		if (Meteor.user().currentRoom != null)
 			return;
-		Rooms.update({_id: gameid},
+		var asdf = Rooms.update({_id: gameid},
 			{$inc: {roomplayers: 1},
 			 $push: {players: {
 			 	player: Meteor.user().username,
@@ -893,12 +901,7 @@ Meteor.methods({
 		Meteor.clearInterval(answerTimerHandle);
 		Meteor.clearInterval(clueActiveHandle);
 		var CATEGORIES_PER_GAME = 6;
-		var randoms = [];
-		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
-			var rand = Math.floor(Math.random() * Clues.find().count());
-			randoms.push(rand);
-		}
-
+		var randoms = randomCategories();
 		var clueArray = [];
 
 		for (i = 0; i < CATEGORIES_PER_GAME; i++) {

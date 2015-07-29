@@ -128,12 +128,18 @@
 }
 
 .room-row {
+	border-top: 1px solid #337ab7;
 	border-bottom: 1px solid #337ab7;
 }
 .room-row:hover {
 	background-color: #335cd7;
 	color: white;
 	cursor: pointer;
+}
+
+.room-row-password {
+	border-top: 1px solid #337ab7;
+	border-bottom: 1px solid #337ab7;
 }
 
 .room-entry {

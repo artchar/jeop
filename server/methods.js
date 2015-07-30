@@ -22,7 +22,6 @@ function randomCategories() {
 
 
 Meteor.methods({
-
 	addRoom:function(roomName, roomPassword) {
 		
 		if (Meteor.user().currentRoom != null)
@@ -442,7 +441,6 @@ Meteor.methods({
 
 		if(Rooms.findOne({_id: gameid}).currentPlayerAnswer != null)
 			return;
-
 
 
 		Meteor.clearInterval(answerTimerHandle);
@@ -998,7 +996,6 @@ Meteor.methods({
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
 			if (now - player.lastPing > 9000 && !player.loggedIn) {
-
 				if (player.currentRoom != null || player.currentRoom != undefined) {
 					var room = player.currentRoom;
 

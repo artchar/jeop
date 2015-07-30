@@ -6,7 +6,7 @@ Template.game.helpers({
 
 Meteor.setInterval(function() {
 	Meteor.call("ping");
-}, 500);
+}, 3000);
 
 
 // Meteor.setInterval(function() {

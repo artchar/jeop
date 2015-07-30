@@ -1,162 +1,12 @@
 var answerTimerHandle;
 var clueActiveHandle;
+var buzzTimerHandle;
 
 var cheerio = Meteor.npmRequire('cheerio');
 
 
-// Call to get an array of 6 random numbers that index clue categories for each game
-function randomCategories() {
-	var CATEGORIES_PER_GAME = 6;
-	var randoms = [];
-
-	var clueCount = Clues.find().count();
-	for (i = 0; i < CATEGORIES_PER_GAME; i++) {
-		var rand = Math.floor(Math.random() * clueCount);
-		while (_.contains(randoms, rand)) {
-			rand = Math.floor(Math.random() * clueCount);
-		}
-		randoms.push(rand);
-	}
-	return randoms;
-}
-
 
 Meteor.methods({
-	addRoom:function(roomName, roomPassword) {
-		
-		if (Meteor.user().currentRoom != null)
-			return;
-
-		var playerid = Meteor.userId();
-		var roomOwner = Meteor.user().username;
-	// Pull random clue categories from the db
-
-		var randoms = randomCategories();
-
-		var clueArray = [];
-		var CATEGORIES_PER_GAME = 6;
-
-		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
-			var c = Clues.find().fetch()[randoms[i]];
-			clueArray.push({
-				category: c.category,
-				comments: c.comments,
-				clues: [{
-					question: c.clues[0].question,
-					answer: c.clues[0].answer,
-					selected: false
-				},
-				{
-					question: c.clues[1].question,
-					answer: c.clues[1].answer,
-					selected: false
-				},
-				{
-					question: c.clues[2].question,
-					answer: c.clues[2].answer,
-					selected: false
-				},
-				{
-					question: c.clues[3].question,
-					answer: c.clues[3].answer,
-					selected: false
-				},
-				{
-					question: c.clues[4].question,
-					answer: c.clues[4].answer,
-					selected: false
-				}]
-			});
-		}
-		
-
-		var roomId = Rooms.insert({
-			roomOwner: roomOwner,
-			ownerId: playerid,
-			roomName: roomName,
-			roomPassword: roomPassword,
-			clues: clueArray,
-			roomplayers: 1,
-			cluesDone: 0,
-
-			players: [{
-				player: roomOwner,
-				money: 0,
-				playerid: playerid,
-				readyStatus: true,
-				buzzInAbility: false,
-				incorrect: false,
-				isWinner: false
-			}],
-
-			// Category and clue indexes help check if a given answer is correct
-			activeClue: {
-				category: null,
-				comments: null,
-				question: null,
-				answer: null,
-				worth: null
-			},
-
-			activePlayer: playerid,
-
-			answeringPlayer: null,
-
-			currentState: 0,
-
-			canBuzzIn: false,
-
-			currentPlayerAnswer: null,
-
-			currentAnswerCorrect: null,
-
-			correctAnswer: null,
-
-			cluePickTimer: 5,
-			answerTimer: 9,
-			clueActiveTimer: 8,
-			buzzTimer: 30
-
-
-		});
-
-
-	// Set user's current room to newly created room id
-		Meteor.users.update({_id: this.userId},
-			{$set: {currentRoom: roomId,
-					playerSlot: 0}});
-
-		return roomId;
-	},
-
-	joinRoom: function(gameid, password) {
-
-		if (Meteor.user().currentRoom != null)
-			return;
-		var roompass = Rooms.findOne({_id: gameid}).roomPassword;
-		if (password != roompass)
-			return false;
-
-		var asdf = Rooms.update({_id: gameid},
-			{$inc: {roomplayers: 1},
-			 $push: {players: {
-			 	player: Meteor.user().username,
-			 	money: 0,
-			 	playerid: Meteor.userId(),
-			 	readyStatus: false,
-			 	incorrect: false
-			 }}});
-
-
-		var players = Rooms.findOne({_id: gameid}).roomplayers - 1;
-
-		Meteor.users.update({_id: this.userId},
-			{$set: {currentRoom: gameid, playerSlot: players}});
-
-		return true;
-
-	},
-
 
 	// Enter state 1: Current user can  select a clue
 	startGame: function() {
@@ -189,6 +39,7 @@ Meteor.methods({
 
 		Meteor.clearInterval(answerTimerHandle);
 		Meteor.clearInterval(clueActiveHandle);
+		Meteor.clearInterval(buzzTimerHandle);
 
 
 		switch (parseInt(clue)) {
@@ -211,8 +62,8 @@ Meteor.methods({
 				activeClueWorth = 0;
 		}
 
-		var activeClueCategory = Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].category;
-		var activeClueComments = Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].comments
+		var activeClueCategory = Rooms.findOne({_id: gameid}).clues[cat].category;
+		var activeClueComments = Rooms.findOne({_id: gameid}).clues[cat].comments
 
 		Rooms.update({_id: Meteor.user().currentRoom},
 			{$set: {
@@ -248,11 +99,12 @@ Meteor.methods({
 				}
 			});
 
-			var buzz = Meteor.setInterval(function() {
+			buzzTimerHandle = Meteor.setInterval(function() {
+				console.log(buzzTimerHandle);
 				if (Rooms.findOne({_id: gameid}) == undefined)
-					Meteor.clearInterval(buzz);
+					Meteor.clearInterval(buzzTimerHandle);
 				if (Rooms.findOne({_id: gameid}).buzzTimer == 0) {
-					Meteor.clearInterval(buzz);
+					Meteor.clearInterval(buzzTimerHandle);
 					Rooms.update({_id: gameid},
 						{$set: {buzzTimer: 30}});
 				}
@@ -377,6 +229,7 @@ Meteor.methods({
 
 		Meteor.clearInterval(answerTimerHandle);
 		Meteor.clearInterval(clueActiveHandle);
+		Meteor.clearInterval(buzzTimerHandle);
 
 		var gameid = Meteor.user().currentRoom;
 
@@ -407,9 +260,13 @@ Meteor.methods({
 		}, 1000);
 	},
 
-	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
-	checkAnswer: function(answer) {
+	spellCheck: function(answer) {
+		this.unblock();
 
+		var gameid = Meteor.user().currentRoom;
+		var playerid = Meteor.userId();
+		var correct = false;
+		var realAnswers = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer;
 
 		var s = HTTP.get("http://www.ask.com/web?q=" + answer);
 		var $ = cheerio.load(s.content);
@@ -429,15 +286,21 @@ Meteor.methods({
 			realAnswers[i] = realAnswers[i].toLowerCase();
 		}
 
+		if (_.contains(realAnswers, cleanedAnswer))
+			return true;
+		else if (_.contains(realAnswers, spellCheckedAnswer))
+			return true;
+		else
+			return false;
+
+	},
+
+	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
+	checkAnswer: function(correct, answer) {
+		
+		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
-		var correct = false;
-
-		if (_.contains(realAnswers, cleanedAnswer))
-			correct = true;
-		else if (_.contains(realAnswers, spellCheckedAnswer))
-			correct = true;
-
 
 		if(Rooms.findOne({_id: gameid}).currentPlayerAnswer != null)
 			return;
@@ -453,11 +316,11 @@ Meteor.methods({
 		// Correct
 		if(correct) {
 			//correct = true;
-			Rooms.update({_id: Meteor.user().currentRoom}, {
+			Rooms.update({_id: gameid}, {
 					$set:{
 							currentPlayerAnswer: answer,
 							currentAnswerCorrect: true,
-							correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer[0]
+							correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer[0]
 					   	  },
 					$inc:{
 							cluesDone: 1
@@ -900,103 +763,16 @@ Meteor.methods({
 		});
 	},
 
-	newGame: function() {
-
-		Meteor.clearInterval(answerTimerHandle);
-		Meteor.clearInterval(clueActiveHandle);
-		var CATEGORIES_PER_GAME = 6;
-		var randoms = randomCategories();
-		var clueArray = [];
-
-		for (i = 0; i < CATEGORIES_PER_GAME; i++) {
-			clueArray.push({
-				category: Clues.find().fetch()[randoms[i]].category,
-				clues: [{
-					question: Clues.find().fetch()[randoms[i]].clues[0].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[0].answer,
-					selected: false
-				},
-				{
-					question: Clues.find().fetch()[randoms[i]].clues[1].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[1].answer,
-					selected: false
-				},
-				{
-					question: Clues.find().fetch()[randoms[i]].clues[2].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[2].answer,
-					selected: false
-				},
-				{
-					question: Clues.find().fetch()[randoms[i]].clues[3].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[3].answer,
-					selected: false
-				},
-				{
-					question: Clues.find().fetch()[randoms[i]].clues[4].question,
-					answer: Clues.find().fetch()[randoms[i]].clues[4].answer,
-					selected: false
-				}]
-			});
-		}
-
-		Rooms.update({_id: Meteor.user().currentRoom},{
-			$set: {
-				clues: clueArray,
-				cluesDone: 0,
-
-
-				// Category and clue indexes help check if a given answer is correct
-				"activeClue.category": null,
-				"activeClue.comments": null,
-				"activeClue.question": null,
-				"activeClue.answer": null,
-				"activeClue.worth": null,
-
-				answeringPlayer: null,
-
-				currentState: 0,
-
-				canBuzzIn: false,
-
-				currentPlayerAnswer: null,
-
-				currentAnswerCorrect: null,
-
-				correctAnswer: null,
-
-				cluePickTimer: 8,
-				answerTimer: 9,
-				clueActiveTimer: 8,
-				buzzTimer: 30
-
-		}
-		});
-
-		for (i=0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
-			var a = {};
-			var q1 = "players." + i + ".isWinner";
-			a[q1] = false;
-			var q2 = "players." + i + ".readyStatus";
-			var q3= "players." + i + ".money";
-			a[q3] = 0;
-			if(i == 0)
-				a[q2] = true;
-			else
-				a[q2] = false;
-			Rooms.update({_id: Meteor.user().currentRoom}, 
-			{$set: a
-			 }
-			);
-
-		}
-	},
 
 	playerCleanup: function() {
+		this.unblock();
 		var now = new Date().getTime();
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
 			if (now - player.lastPing > 9000 && !player.loggedIn) {
+
 				if (player.currentRoom != null || player.currentRoom != undefined) {
+					console.log(player.username);
 					var room = player.currentRoom;
 
 					if (Rooms.findOne({_id: room}) == undefined)

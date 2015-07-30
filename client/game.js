@@ -5,7 +5,8 @@ Template.game.helpers({
 });
 
 Meteor.setInterval(function() {
-	Meteor.call("ping");
+	if (Meteor.user() != null)
+		Meteor.call("ping");
 }, 3000);
 
 

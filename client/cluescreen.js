@@ -138,7 +138,10 @@ Template.cluescreen.events({
 		$("#answer-form").hide();
 
 		Meteor.setTimeout(function() {
-			Meteor.call("checkAnswer", answer);
+			Meteor.call("spellCheck", answer, function(err, result) {
+				Meteor.call("checkAnswer", result, answer);
+			});
+			
 		}, 1000);
 
 

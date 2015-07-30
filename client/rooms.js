@@ -1,3 +1,5 @@
+$(".pw").hide();
+
 Template.rooms.helpers({
 	username: function() {
 		if (Meteor.user() != null)
@@ -22,28 +24,40 @@ Template.rooms.helpers({
 Template.rooms.events({
 	"submit #roomInfo": function(event, template) {
 		event.preventDefault();
+		
 
 		$("#createRoom").modal("hide");
+
 		var roomName = event.target.roomName.value;
 		var roomPassword = event.target.roomPassword.value;
 		var id = Meteor.userId();
 		var gameid;
 		$("#roomName").val("");
 		$("#roomPassword").val("");
-		Meteor.apply("addRoom", [roomName, roomPassword, Meteor.userId()], true, function(err, result){
-			gameid = result;
-		});
+
 		Meteor.setTimeout(function() {
-			var handle = Meteor.setInterval(function() {
-				if (gameid != undefined) {
-					Router.go("/rooms/" + gameid);
-					Meteor.clearInterval(handle);
-				}
-				else{
-					return;
-				}
-			}, 5);
-			}, 5000);
+			Session.set("loading", true);
+		}, 400);
+
+		Meteor.setTimeout(function() {
+			Meteor.call("addRoom", roomName, roomPassword, function(err, result){
+				Session.set("loading", false);
+
+				gameid = result;
+				Router.go("/rooms/" + gameid);
+			});
+		}, 1200);
+		// Meteor.setTimeout(function() {
+		// 	var handle = Meteor.setInterval(function() {
+		// 		if (gameid != undefined) {
+		// 			Router.go("/rooms/" + gameid);
+		// 			Meteor.clearInterval(handle);
+		// 		}
+		// 		else{
+		// 			return;
+		// 		}
+		// 	}, 5);
+		// 	}, 5000);
 
 	},
 
@@ -57,6 +71,7 @@ Template.rooms.events({
 		var gameid = event.currentTarget.id;
 		var playerid = Meteor.userId();
 		var playerName = Meteor.user().username;
+		$("#pw-" + gameid).toggle(400);
 		// Session.set("loading", true);
 		// Meteor.call("joinRoom", gameid);
 		
@@ -64,6 +79,26 @@ Template.rooms.events({
 		// 	Router.go("/rooms/" + gameid);
 		// 	Session.set("loading", false);
 		// }, 1500);
+	},
+
+	"submit .pw": function(event, template) {
+		event.preventDefault();
+		var gameid = event.target.id;
+		gameid = gameid.substr(3, gameid.length-1);
+
+		var pw = event.target.password.value;
+		Session.set("loading", true);
+		
+		Meteor.call("joinRoom", gameid, pw, function(err, result) {
+			Session.set("loading", false);
+			if (result) {
+				Router.go("/rooms/" + gameid);
+			}
+			else {
+				alert("wrong password");
+			}
+		});
+
 	}
 });
 

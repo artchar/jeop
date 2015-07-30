@@ -130,10 +130,14 @@ Meteor.methods({
 		return roomId;
 	},
 
-	joinRoom: function(gameid) {
+	joinRoom: function(gameid, password) {
 
 		if (Meteor.user().currentRoom != null)
 			return;
+		var roompass = Rooms.findOne({_id: gameid}).roomPassword;
+		if (password != roompass)
+			return false;
+
 		var asdf = Rooms.update({_id: gameid},
 			{$inc: {roomplayers: 1},
 			 $push: {players: {
@@ -149,6 +153,8 @@ Meteor.methods({
 
 		Meteor.users.update({_id: this.userId},
 			{$set: {currentRoom: gameid, playerSlot: players}});
+
+		return true;
 
 	},
 

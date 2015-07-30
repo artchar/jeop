@@ -11,7 +11,7 @@
 
 EasySecurity.config({
   methods: {
-    joinRoom: { type: 'rateLimit', ms: 1000 },
+    joinRoom: { type: 'rateLimit', ms: 2000 },
     checkAnswer: {type: 'rateLimit', ms: 2350}
   },
   ignoredMethods: ['playerCleanup', 'roomCleanup', 'ping', 'playerLeave', 'login', 'clickClue'],

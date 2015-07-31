@@ -25,7 +25,7 @@ Template.cluescreen.helpers({
 
 	theCorrectAnswer: function() {
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer != null) 
-			return "Correct answer: " + Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer;
+			return "Correct answer: " + Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer + "<a href='#' class='report'> Report faulty clue</a>";
 
 		else
 			return "";
@@ -131,7 +131,6 @@ Template.cluescreen.events({
 
 		var answer = $("#answer").val();
 		$("#answer-form").hide();
-		console.log('ssds');
 		Session.set("answering", false);
 		Meteor.clearInterval(s);
 

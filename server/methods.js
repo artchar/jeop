@@ -260,7 +260,7 @@ Meteor.methods({
 
 		
 
-		var regex = /['\s"!@ #$%^&*()\/\\-_,.;]/g;
+		var regex = /['\s"!@ #$%^&*()\/\\\-_,.;]/g;
 		var regex2 = /and/gi;
 		var cleanedAnswer = answer.replace(regex, "");
 		cleanedAnswer = cleanedAnswer.replace(regex2, "");
@@ -650,15 +650,10 @@ Meteor.methods({
 
 
 	playerCleanup: function() {
-		this.unblock();
 		var now = new Date().getTime();
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
 			if (now - player.lastPing > 9000 && !player.loggedIn) {
-				console.log(now - player.lastPing > 9000);
-				console.log(!player.loggedIn);
-				console.log("shit");
-				console.log(player.username);
 
 				if (player.currentRoom != null || player.currentRoom != undefined) {
 					var room = player.currentRoom;

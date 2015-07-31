@@ -222,3 +222,8 @@ footer div a {
 	margin: .5em;
 	width: 50%;
 }
+
+.report {
+	color:yellow;
+	margin-left: 1em;
+}

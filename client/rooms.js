@@ -8,7 +8,7 @@ Template.rooms.helpers({
 	},
 
 	roomsList: function() {
-		return Rooms.find({roomplayers: {$lt: 6}, roomName: {$regex:Session.get("roomsearch")}}, {sort: {roomName: 1}});
+		return Rooms.find({roomplayers: {$lt: 6}, roomName: {$regex:Session.get("roomsearch"), $options: 'i'}}, {sort: {roomName: 1}});
 	},
 
 	redir: function() {

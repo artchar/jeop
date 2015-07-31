@@ -57,6 +57,7 @@ Router.route("/rooms/:_id", {
 	},
 
 	onStop: function() {
+		console.log("LEAVE");
 		Meteor.call("playerLeave");
 	},
 

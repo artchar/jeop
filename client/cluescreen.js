@@ -201,11 +201,14 @@ Template.cluescreen.onRendered(function() {
 					Session.set("buzzTime", 3000);
 					j = Meteor.setInterval(function() {
 						if (Session.equals("buzzTime"), 0) {
-							Meteor.clearInterval(h);
+							Meteor.clearInterval(j);
 						}
 						else
 							Session.set("buzzTime", Session.get("buzzTime") - 1);
-					}, 1)
+					}, 1);
+				}
+				else if (fields.currentState == 5) {
+					Meteor.clearInterval(j);
 				}
 			}
 

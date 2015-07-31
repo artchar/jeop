@@ -205,3 +205,15 @@ hr {
 h1 {
 	text-shadow: 0 0 4px #ADD8E6;
 }
+
+footer {
+	
+	text-align: center;
+}
+
+footer div a {
+	display:inline;
+	font-size: 1em;
+
+	margin: 2em;
+}

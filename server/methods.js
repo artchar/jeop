@@ -655,6 +655,10 @@ Meteor.methods({
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
 			if (now - player.lastPing > 9000 && !player.loggedIn) {
+				console.log(now - player.lastPing > 9000);
+				console.log(!player.loggedIn);
+				console.log("shit");
+				console.log(player.username);
 
 				if (player.currentRoom != null || player.currentRoom != undefined) {
 					var room = player.currentRoom;

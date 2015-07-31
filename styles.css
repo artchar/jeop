@@ -207,7 +207,7 @@ h1 {
 }
 
 footer {
-	
+
 	text-align: center;
 }
 
@@ -216,4 +216,9 @@ footer div a {
 	font-size: 1em;
 
 	margin: 2em;
+}
+
+.searchwrap {
+	margin: .5em;
+	width: 50%;
 }

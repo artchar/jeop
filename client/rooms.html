@@ -8,8 +8,13 @@
 			<div class="jumbotron">
 				<h2 class="welcome">Welcome {{username}}!</h2>
 
-				<p><button type="button" class="btn btn-custom btn-info btn-lg" data-toggle="modal" data-target="#createRoom">Create Room</button>
-				<button type="button" class="btn btn-custom btn-info btn-lg" id="signOut">Sign Out</button></p>
+				<p>
+					<button type="button" class="btn btn-custom btn-info btn-lg" data-toggle="modal" data-target="#createRoom">Create Room</button>
+					<button type="button" class="btn btn-custom btn-info btn-lg" id="signOut">Sign Out</button>
+					<div class="searchwrap">
+						<input type = "text" id="search" name="search" class="form-control" placeholder="Search for a room" maxlength="14">
+					</div>
+				</p>
 
 				<div id="createRoom" class="modal fade">
 					<div class="modal-dialog">

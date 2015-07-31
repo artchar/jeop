@@ -1,4 +1,5 @@
 $(".pw").hide();
+Session.setDefault("roomsearch", "");
 
 Template.rooms.helpers({
 	username: function() {
@@ -7,7 +8,7 @@ Template.rooms.helpers({
 	},
 
 	roomsList: function() {
-		return Rooms.find({roomplayers: {$lt: 6}}, {sort: {roomName: 1}});
+		return Rooms.find({roomplayers: {$lt: 6}, roomName: {$regex:Session.get("roomsearch")}}, {sort: {roomName: 1}});
 	},
 
 	redir: function() {
@@ -99,6 +100,11 @@ Template.rooms.events({
 			}
 		});
 
+	},
+
+	"input #search": function(event, template) {
+		event.preventDefault();
+		Session.set("roomsearch", event.currentTarget.value);
 	}
 });
 

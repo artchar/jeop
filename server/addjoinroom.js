@@ -14,6 +14,7 @@ function randomCategories() {
 		}
 		randoms.push(rand);
 	}
+	console.log(randoms);
 	return randoms;
 }
 

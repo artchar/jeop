@@ -1,8 +1,5 @@
 <template name="game">
 
-<head>
-	<title>jeop</title>
-</head>
 
 <body>
 
@@ -17,10 +14,20 @@
 	<hr color="blue">
 
 			{{> yield "players"}}
+
+			
+	<hr>
 		
 	</div>
+
 {{else}}
 {{redir}}
+
+
 {{/if}}
+
+
 </body>
+
+	{{> yield "footer"}}
 </template>

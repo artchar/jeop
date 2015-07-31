@@ -9,9 +9,9 @@ Router.route("rooms", {path: "/rooms",
 
 
 Router.route("/rooms/:_id", {
+
 	action: function() {
 
-		  
 		this.render("game");
 
 		this.render("board", {
@@ -47,6 +47,10 @@ Router.route("/rooms/:_id", {
 				else
 					return;
 			}
+		});
+
+		this.render("footer", {
+			to: "footer"
 		});
 
 

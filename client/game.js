@@ -13,3 +13,5 @@ Meteor.setInterval(function() {
 // Meteor.setInterval(function() {
 // 	if (Meteor.user().currentRoom)
 // })
+
+document.title = "J-PARTY";

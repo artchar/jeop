@@ -49,6 +49,7 @@ Router.route("/rooms/:_id", {
 			}
 		});
 
+
 	},
 
 	onStop: function() {

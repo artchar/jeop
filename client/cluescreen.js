@@ -1,5 +1,6 @@
 var han2dle = "HH";
 var submitted = false;
+
 Template.cluescreen.helpers({
 	activeClue: function() {
 		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
@@ -52,7 +53,7 @@ Template.cluescreen.helpers({
 	startDisable: function() {
 		var allReady = true;
 		var players = Rooms.findOne({_id: Meteor.user().currentRoom}).players;
-		for (i = 0; i < players.length; i++) {
+		for (var i = 0; i < players.length; i++) {
 			if (players[i].readyStatus == false)
 				allReady = false;
 		}
@@ -79,23 +80,17 @@ Template.cluescreen.helpers({
 
 	answerTimer: function() {
 
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).answeringPlayer == Meteor.userId() && !submitted) {
-			if (Rooms.findOne({_id: Meteor.user().currentRoom}).answerTimer == 0) {
-				$("#answer-form").submit();
-				submitted = true;
-				Meteor.setTimeout(function() {
-					submitted = false;
-				}, 2000);
-				return ":00";
-			}
-			return ":0" + Rooms.findOne({_id: Meteor.user().currentRoom}).answerTimer;
+		
+		if (Session.get("answering")) {
+			
+			return ":0" + Session.get("answeringTime");
 		}
 		else return "";
 	},
 
 	clueActiveTimer: function() {
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4) {
-			return ":0" + Rooms.findOne({_id: Meteor.user().currentRoom}).clueActiveTimer;
+			return ":0" + Session.get("activeTime");
 		}
 		else return "";
 	},
@@ -136,6 +131,9 @@ Template.cluescreen.events({
 
 		var answer = $("#answer").val();
 		$("#answer-form").hide();
+		console.log('ssds');
+		Session.set("answering", false);
+		Meteor.clearInterval(s);
 
 		Meteor.setTimeout(function() {
 			Meteor.call("spellCheck", answer, function(err, result) {
@@ -153,10 +151,27 @@ Template.cluescreen.events({
 	"click #buzzer": function(event) {
 		event.preventDefault();
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4)
-			Meteor.call("buzzIn");
+			Meteor.call("buzzIn", function(err, result) {
+				if (result) {
+					Session.set("answering", true);
+					Session.set("answeringTime", 8);
+					s = Meteor.setInterval(function() {
+						if (Session.get("answeringTime") == 0 && Session.get("answering")) {
+							$("#answer-form").submit();
+							Meteor.clearInterval(s);
+							Session.set("answering", false);
+							return ":00";
+						}
+						else {
+							Session.set("answeringTime", Session.get("answeringTime") - 1);
+						}
+					}, 1000);
+				}
+
+			});
 		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 3) {
-			var hideTime = Rooms.findOne({_id: Meteor.user().currentRoom}).buzzTimer * 100;
-			hideTime += 300;
+			var hideTime = Session.get("buzzTime");
+			hideTime += 200;
 			$("#buzzer").hide();
 			Meteor.setTimeout(function() {
 				$("#buzzer").show();
@@ -165,6 +180,42 @@ Template.cluescreen.events({
 	}
 
 });
+
+Template.cluescreen.onRendered(function() {
+
+		var stateQuery = Rooms.find({_id: Meteor.user().currentRoom});
+		handle = stateQuery.observeChanges({
+			changed: function(id, fields) {
+				if (fields.currentState == 4) {
+					Session.set("activeTime", 6);
+					h = Meteor.setInterval(function() {
+						if (Session.equals("activeTime", 0) || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 4)
+						{
+							Meteor.clearInterval(h);
+						}
+						else 
+							Session.set("activeTime", Session.get("activeTime") -1);
+					}, 1000);
+				}
+				else if (fields.currentState == 3) {
+					Session.set("buzzTime", 3000);
+					j = Meteor.setInterval(function() {
+						if (Session.equals("buzzTime"), 0) {
+							Meteor.clearInterval(h);
+						}
+						else
+							Session.set("buzzTime", Session.get("buzzTime") - 1);
+					}, 1)
+				}
+			}
+
+		});
+	});
+
+Template.cluescreen.onDestroyed(function() {
+	handle.stop();
+})
+
 
 
  

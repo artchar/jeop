@@ -178,7 +178,7 @@ Meteor.methods({
 						currentAnswerCorrect: null
 				   	  }
 			}, function() {
-				Meteor._sleepForMs(2800);
+				Meteor.sleep(2800);
 				Rooms.update({_id: gameid}, {
 						$set:{
 								currentState: 5,
@@ -299,6 +299,7 @@ Meteor.methods({
 
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(correct, answer) {
+		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
 
@@ -331,7 +332,7 @@ Meteor.methods({
 				});	
 		}
 
-		Meteor._sleepForMs(3000);
+		Meteor.sleep(3000);
 
 		if(correct) {	// CORRECT
 				var slot = Meteor.user().playerSlot;
@@ -359,7 +360,7 @@ Meteor.methods({
 				}, function() {
 					resetIncorrect(gameid, playerid);
 					if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 30) {
-						Meteor._sleepForMs(1000);
+						Meteor.sleep(1000);
 						endGame(gameid, playerid);
 					}
 
@@ -410,7 +411,7 @@ Meteor.methods({
 					$inc: {cluesDone: 1}
 				});
 
-				Meteor._sleepForMs(3000);
+				Meteor.sleep(3000);
 
 				Rooms.update({_id: Meteor.user().currentRoom}, {
 				$set: {
@@ -434,7 +435,7 @@ Meteor.methods({
 
 
 				if (Rooms.findOne({_id: Meteor.user().currentRoom}).cluesDone == 30) {
-					Meteor._sleepForMs(1000);
+					Meteor.sleep(1000);
 				
 					endGame(gameid, playerid);
 				}
@@ -624,6 +625,10 @@ Meteor.methods({
 
 		Rooms.update({_id: Meteor.user().currentRoom}, 
 			{$inc: {roomplayers: -1}
+			 }, function() {
+			 	Meteor.users.update({_id: userId},
+					{$set: {currentRoom: null, playerSlot: null}
+				});
 			 }
 			);
 		
@@ -631,18 +636,18 @@ Meteor.methods({
 			{$set: setReady
 			 }
 			);
-		var handle2 = Meteor.setInterval(function() {
-			if (Rooms.findOne({_id: gameId}).roomplayers != p) {
+		// var handle2 = Meteor.setInterval(function() {
+		// 	if (Rooms.findOne({_id: gameId}).roomplayers != p) {
 
-				Meteor.users.update({_id: userId},
-					{$set: {currentRoom: null, playerSlot: null}
-				});
-				Meteor.clearInterval(handle2);
-			}
-			else{
-				return;
-			}
-		}, 5);
+		// 		Meteor.users.update({_id: userId},
+		// 			{$set: {currentRoom: null, playerSlot: null}
+		// 		});
+		// 		Meteor.clearInterval(handle2);
+		// 	}
+		// 	else{
+		// 		return;
+		// 	}
+		// }, 5);
 
 	},
 
@@ -660,10 +665,13 @@ Meteor.methods({
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
 			if (now - player.lastPing > 9000 && !player.loggedIn) {
+				console.log(player.username);
+				var gameId = room;
+				var userId = player._id;
 
 				if (player.currentRoom != null || player.currentRoom != undefined) {
 					var room = player.currentRoom;
-
+					console.log("asdfaidsa");
 					if (Rooms.findOne({_id: room}) == undefined)
 						return;
 					if (player._id == Rooms.findOne({_id: room}).ownerId){
@@ -703,8 +711,6 @@ Meteor.methods({
 				var setReady = {};
 				setReady[query] = true;
 				var p = Rooms.findOne({_id: room}).roomplayers;
-				var gameId = room;
-				var userId = player._id;
 				var slot = player.playerSlot;
 
 				for (var i = slot+1; i < p; i++) {
@@ -719,6 +725,9 @@ Meteor.methods({
 
 				Rooms.update({_id: room}, 
 					{$inc: {roomplayers: -1}
+					 }, function() {
+					 	console.log("hi");
+					 	Meteor.users.update({_id: userId}, {currentRoom: null, playerSlot: null});
 					 }
 					);
 				
@@ -726,20 +735,11 @@ Meteor.methods({
 					{$set: setReady
 					 }
 					);
-				var handle3 = Meteor.setInterval(function() {
-					if (Rooms.findOne({_id: gameId}) === undefined)
-						return;
-					if (Rooms.findOne({_id: gameId}).roomplayers != p) {
+				}
 
-						Meteor.users.update({_id: userId},
-							{$set: {currentRoom: null, playerSlot: null}
-						});
-						Meteor.clearInterval(handle3);
-					}
-					else{
-						return;
-					}
-				}, 5);
+				else {
+					console.log("RMd");
+					Meteor.users.remove({_id: userId});
 				}
 
 			}

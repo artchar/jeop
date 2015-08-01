@@ -18,6 +18,7 @@ meteorhacks:npm
 
 
 npm-container
-meteorhacks:kadira
 meteorhacks:kadira-debug
 reactive-var
+meteorhacks:kadira
+froatsnook:sleep

@@ -14,4 +14,8 @@ Meteor.setInterval(function() {
 // 	if (Meteor.user().currentRoom)
 // })
 
+Accounts.onLogin(function() {
+	Meteor.call("ping");
+});
+
 document.title = "J-PARTY";

@@ -125,6 +125,10 @@ Meteor.methods({
 			}
 		});
 
+		catidx = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.index;
+		activeq = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
+		userAnswer = Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer;
+
 		var query = "clues." + cat + "." + "clues." + clue +".selected";
 		var setClue = {};
 		setClue[query] = true;
@@ -299,7 +303,6 @@ Meteor.methods({
 
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(correct, answer) {
-		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
 
@@ -664,7 +667,7 @@ Meteor.methods({
 		var now = new Date().getTime();
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
-			if (now - player.lastPing > 9000 && !player.loggedIn) {
+			if (now - player.lastPing > 15500 && !player.loggedIn) {
 				console.log(player.username);
 				var gameId = room;
 				var userId = player._id;
@@ -750,10 +753,10 @@ Meteor.methods({
 		var now = new Date();
 		Reports.insert({
 			date: now, 
-			catIndex: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.index,
-			q: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question,
-			userAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer
-		})
+			catIndex: catidx,
+			q: activeq,
+			userAnswer: userAnswer
+		});
 	}
 
 });

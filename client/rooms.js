@@ -107,7 +107,3 @@ Template.rooms.events({
 		Session.set("roomsearch", event.currentTarget.value);
 	}
 });
-
-Meteor.setInterval(function() {
-	
-})

@@ -130,11 +130,17 @@ Template.cluescreen.events({
 	},
 
 	"click #newgame": function(event) {
-		Meteor.call("newGame");
+		$("#newgame").hide();
+		Meteor.call("newGame", function(err, result) {
+			$("#newgame".show());
+		});
 	},
 
 	"submit form": function(event) {
 		event.preventDefault();
+
+		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 5)
+			return;
 
 		var answer = $("#answer").val();
 		$("#answer-form").hide();
@@ -183,6 +189,8 @@ Template.cluescreen.events({
 				$("#buzzer").show();
 			}, hideTime);
 		}
+		else
+			return;
 	}
 
 });

@@ -114,6 +114,10 @@ Template.cluescreen.helpers({
 });
 
 Template.cluescreen.events({
+	"click .report": function(event) {
+
+	},
+
 	"click #start": function(event) {
 		Meteor.call("startGame");
 	},

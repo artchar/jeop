@@ -25,7 +25,7 @@ Template.cluescreen.helpers({
 
 	theCorrectAnswer: function() {
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer != null) 
-			return "Correct answer: " + Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer + "<a href='#' class='report'> Report faulty clue</a>";
+			return "Correct answer: " + Rooms.findOne({_id: Meteor.user().currentRoom}).correctAnswer + "<span class='reportspan'><a href='#' class='report'> Report faulty clue</a></span>";
 
 		else
 			return "";
@@ -114,7 +114,10 @@ Template.cluescreen.helpers({
 });
 
 Template.cluescreen.events({
-	"click .report": function(event) {
+	"click .reportspan": function(event) {
+		event.preventDefault();
+		$(".reportspan").html("<span class='report' style='color: #51CA51'> Thanks!</span>");
+		Meteor.call("reportClue");
 
 	},
 
@@ -185,38 +188,37 @@ Template.cluescreen.events({
 });
 
 Template.cluescreen.onRendered(function() {
-
-		var stateQuery = Rooms.find({_id: Meteor.user().currentRoom});
-		handle = stateQuery.observeChanges({
-			changed: function(id, fields) {
-				if (fields.currentState == 4) {
-					Session.set("activeTime", 6);
-					h = Meteor.setInterval(function() {
-						if (Session.equals("activeTime", 0) || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 4)
-						{
-							Meteor.clearInterval(h);
-						}
-						else 
-							Session.set("activeTime", Session.get("activeTime") -1);
-					}, 1000);
-				}
-				else if (fields.currentState == 3) {
-					Session.set("buzzTime", 3000);
-					j = Meteor.setInterval(function() {
-						if (Session.equals("buzzTime"), 0) {
-							Meteor.clearInterval(j);
-						}
-						else
-							Session.set("buzzTime", Session.get("buzzTime") - 1);
-					}, 1);
-				}
-				else if (fields.currentState == 5) {
-					Meteor.clearInterval(j);
-				}
+	var stateQuery = Rooms.find({_id: Meteor.user().currentRoom});
+	handle = stateQuery.observeChanges({
+		changed: function(id, fields) {
+			if (fields.currentState == 4) {
+				Session.set("activeTime", 6);
+				h = Meteor.setInterval(function() {
+					if (Session.equals("activeTime", 0) || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 4)
+					{
+						Meteor.clearInterval(h);
+					}
+					else 
+						Session.set("activeTime", Session.get("activeTime") -1);
+				}, 1000);
 			}
+			else if (fields.currentState == 3) {
+				Session.set("buzzTime", 3000);
+				j = Meteor.setInterval(function() {
+					if (Session.equals("buzzTime"), 0) {
+						Meteor.clearInterval(j);
+					}
+					else
+						Session.set("buzzTime", Session.get("buzzTime") - 1);
+				}, 1);
+			}
+			else if (fields.currentState == 5) {
+				Meteor.clearInterval(j);
+			}
+		}
 
-		});
 	});
+});
 
 Template.cluescreen.onDestroyed(function() {
 	handle.stop();

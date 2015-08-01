@@ -45,6 +45,7 @@ function endGame(gameid, playerid) {
 		currentState: 7,
 		answeringPlayer: null,
 		activePlayer: playerid,
+		"activeClue.index": null,
 		"activeClue.question": null,
 		"activeClue.answer": null,
 		"activeClue.worth": null,
@@ -111,11 +112,13 @@ Meteor.methods({
 		}
 
 		var activeClueCategory = Rooms.findOne({_id: gameid}).clues[cat].category;
-		var activeClueComments = Rooms.findOne({_id: gameid}).clues[cat].comments
+		var activeClueComments = Rooms.findOne({_id: gameid}).clues[cat].comments;
+		var activeClueIndex = Rooms.findOne({_id: gameid}).clues[cat].index;
 
 		Rooms.update({_id: Meteor.user().currentRoom},
 			{$set: {
 				currentState: 2,
+				"activeClue.index": activeClueIndex,
 				"activeClue.worth": activeClueWorth,
 				"activeClue.category": activeClueCategory,
 				"activeClue.comments": activeClueComments
@@ -189,6 +192,7 @@ Meteor.methods({
 								currentState: 1,
 								answeringPlayer: null,
 								activePlayer: playerid,
+								"activeClue.index": null,
 								"activeClue.question": null,
 								"activeClue.answer": null,
 								"activeClue.worth": null,
@@ -252,7 +256,6 @@ Meteor.methods({
 	},
 
 	spellCheck: function(answer) {
-		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
 		var correct = false;
@@ -277,10 +280,10 @@ Meteor.methods({
 			return true;
 		else {
 			console.log("GETted!");
-			var s = HTTP.get("http://search.lycos.com/web/?q="+ answer +"&keyvol=00d12a857e3e959ecdfc");
-			var $ = cheerio.load(s.content);
-			var spellCheckedAnswer = $('.spelling > p > a').text();
-			spellCheckedAnswer = spellCheckedAnswer.substr(0, spellCheckedAnswer.length);
+			var k = "0zDUgX3pZHGBRLK9B9KwPhS52ugr4LpeGw7Fk0lt01s";
+			var url = "https://api.datamarket.azure.com/Bing/Search/v1/SpellingSuggestions?Query=%27" + answer + "%27&$format=JSON";
+			var s = HTTP.call("GET", url, {auth: k + ":" + k});
+			var spellCheckedAnswer = s.data.d.results[0].Value;
 			spellCheckedAnswer = spellCheckedAnswer.replace(regex, "");
 			spellCheckedAnswer = spellCheckedAnswer.replace(regex2, "");
 			spellCheckedAnswer = spellCheckedAnswer.toLowerCase();
@@ -296,7 +299,6 @@ Meteor.methods({
 
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(correct, answer) {
-		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
 
@@ -342,6 +344,7 @@ Meteor.methods({
 						currentState: 1,
 						answeringPlayer: null,
 						activePlayer: Meteor.user()._id,
+						"activeClue.index": null,
 						"activeClue.question": null,
 						"activeClue.answer": null,
 						"activeClue.worth": null,
@@ -407,12 +410,13 @@ Meteor.methods({
 					$inc: {cluesDone: 1}
 				});
 
-				Meteor._sleepForMs(2000);
+				Meteor._sleepForMs(3000);
 
 				Rooms.update({_id: Meteor.user().currentRoom}, {
 				$set: {
 					currentState: 1,
 					answeringPlayer: null,
+					"activeClue.index": null,
 					"activeClue.question": null,
 					"activeClue.answer": null,
 					"activeClue.worth": null,
@@ -459,6 +463,7 @@ Meteor.methods({
 							currentState: 1,
 							answeringPlayer: null,
 							//activePlayer: playerid,
+							"activeClue.index": null,
 							"activeClue.question": null,
 							"activeClue.answer": null,
 							"activeClue.worth": null,
@@ -492,6 +497,7 @@ Meteor.methods({
 								currentState: 7,
 								answeringPlayer: null,
 				//				activePlayer: playerid,
+								"activeClue.index": null,
 								"activeClue.question": null,
 								"activeClue.answer": null,
 								"activeClue.worth": null,
@@ -738,6 +744,16 @@ Meteor.methods({
 
 			}
 		});
+	},
+
+	reportClue: function() {
+		var now = new Date();
+		Reports.insert({
+			date: now, 
+			catIndex: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.index,
+			q: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question,
+			userAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer
+		})
 	}
 
 });

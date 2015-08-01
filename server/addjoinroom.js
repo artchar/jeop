@@ -89,6 +89,7 @@ Meteor.methods({
 
 			// Category and clue indexes help check if a given answer is correct
 			activeClue: {
+				index: null,
 				category: null,
 				comments: null,
 				question: null,
@@ -220,8 +221,8 @@ Meteor.methods({
 				clues: clueArray,
 				cluesDone: 0,
 
-
 				// Category and clue indexes help check if a given answer is correct
+				"activeClue.index": null,
 				"activeClue.category": null,
 				"activeClue.comments": null,
 				"activeClue.question": null,

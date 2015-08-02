@@ -413,7 +413,7 @@ Meteor.methods({
 					$inc: {cluesDone: 1}
 				});
 
-				Meteor.sleep(3000);
+				Meteor.sleep(3400);
 
 				Rooms.update({_id: Meteor.user().currentRoom}, {
 				$set: {

@@ -194,53 +194,13 @@ Template.cluescreen.events({
 
 });
 
-Template.cluescreen.onRendered(function() {
-	var stateQuery = Rooms.find({_id: Meteor.user().currentRoom});
-	handle = stateQuery.observeChanges({
-		changed: function(id, fields) {
-			if (fields.currentState == 4) {
-				Session.set("activeTime", 6);
-				h = Meteor.setInterval(function() {
-					if (Session.equals("activeTime", 0) || Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 4)
-					{
-						Meteor.clearInterval(h);
-					}
-					else 
-						Session.set("activeTime", Session.get("activeTime") -1);
-				}, 1000);
-			}
-			else if (fields.currentState == 3) {
-				Session.set("buzzTime", 3000);
-				j = Meteor.setInterval(function() {
-					if (Session.equals("buzzTime"), 0) {
-						Meteor.clearInterval(j);
-					}
-					else
-						Session.set("buzzTime", Session.get("buzzTime") - 1);
-				}, 1);
-			}
-			else if (fields.currentState == 5) {
-				Meteor.clearInterval(j);
-			}
+Template.cluescreen.onCreated(function() {
 
-			if(fields.currentPlayerAnswer != null){
-				Session.set("lastanswer", fields.currentPlayerAnswer);
-			}
-			
-			if(fields.activeClue.index != null){
-				Session.set("lastactiveindex", fields.activeClue.index);
-			}
-
-			if(fields.activeClue.question != null) {
-				Session.set("lastactivequestion", fields.activeClue.question);
-			}
-		}
-
-	});
 });
 
 Template.cluescreen.onDestroyed(function() {
-	handle.stop();
+	console.log("peace");
+	observeHandle.stop();
 })
 
 

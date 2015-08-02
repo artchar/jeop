@@ -16,6 +16,7 @@ Meteor.publish("currentRoom", function(id) {
 	// 	if (this.userId == Rooms.findOne({_id: id}).players[i].playerid) {
 	return Rooms.find({_id: id}, {
 		fields: {
+			"activeClue.index": true,
 			players: true,
 			"activeClue.question": true,
 			"activeClue.worth": true,

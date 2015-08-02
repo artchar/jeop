@@ -117,7 +117,7 @@ Template.cluescreen.events({
 	"click .reportspan": function(event) {
 		event.preventDefault();
 		$(".reportspan").html("<span class='report' style='color: #51CA51'> Thanks!</span>");
-		Meteor.call("reportClue");
+		Meteor.call("reportClue", Session.get("lastactiveindex"), Session.get("lastactivequestion"), Session.get("lastanswer"));
 
 	},
 
@@ -147,17 +147,15 @@ Template.cluescreen.events({
 		Session.set("answering", false);
 		Meteor.clearInterval(s);
 
-		Meteor.setTimeout(function() {
-			Meteor.call("spellCheck", answer, function(err, result) {
-				Meteor.call("checkAnswer", result, answer);
+		Meteor.call("spellCheck", answer, function(err, result) {
+			Meteor.call("checkAnswer", result, answer);
 			});
 			
-		}, 1000);
 
 
 		Meteor.setTimeout(function() {
 			$("#answer-form").show();
-		}, 6000);
+		}, 7500);
 	},
 
 	"click #buzzer": function(event) {
@@ -183,6 +181,7 @@ Template.cluescreen.events({
 			});
 		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 3) {
 			var hideTime = Session.get("buzzTime");
+			Meteor.clearInterval(j);
 			hideTime += 200;
 			$("#buzzer").hide();
 			Meteor.setTimeout(function() {
@@ -222,6 +221,18 @@ Template.cluescreen.onRendered(function() {
 			}
 			else if (fields.currentState == 5) {
 				Meteor.clearInterval(j);
+			}
+
+			if(fields.currentPlayerAnswer != null){
+				Session.set("lastanswer", fields.currentPlayerAnswer);
+			}
+			
+			if(fields.activeClue.index != null){
+				Session.set("lastactiveindex", fields.activeClue.index);
+			}
+
+			if(fields.activeClue.question != null) {
+				Session.set("lastactivequestion", fields.activeClue.question);
 			}
 		}
 

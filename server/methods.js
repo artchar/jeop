@@ -1,8 +1,4 @@
-var answerTimerHandle;
-var clueActiveHandle;
-var buzzTimerHandle;
 
-var cheerio = Meteor.npmRequire('cheerio');
 
 function resetIncorrect(gameid, playerid) {
 
@@ -123,11 +119,13 @@ Meteor.methods({
 				"activeClue.category": activeClueCategory,
 				"activeClue.comments": activeClueComments
 			}
-		});
+		}, function() {
 
 		catidx = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.index;
 		activeq = Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
 		userAnswer = Rooms.findOne({_id: Meteor.user().currentRoom}).currentPlayerAnswer;
+			});
+
 
 		var query = "clues." + cat + "." + "clues." + clue +".selected";
 		var setClue = {};
@@ -303,6 +301,7 @@ Meteor.methods({
 
 	// Check player's answer, if correct go back to state 1, else go to state 4 and disable incorrect player's ability to buzz in
 	checkAnswer: function(correct, answer) {
+		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
 
@@ -749,12 +748,12 @@ Meteor.methods({
 		});
 	},
 
-	reportClue: function() {
+	reportClue: function(catindx, q, userAnswer) {
 		var now = new Date();
 		Reports.insert({
 			date: now, 
-			catIndex: catidx,
-			q: activeq,
+			catIndex: catindx,
+			q: q,
 			userAnswer: userAnswer
 		});
 	}

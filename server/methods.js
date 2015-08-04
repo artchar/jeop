@@ -78,6 +78,8 @@ Meteor.methods({
 
 	// Enter state 2: Show money value on the clue screen
 	clickClue: function(cat, clue) {
+
+		this.unblock();
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 1 || Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer != this.userId)
 			return;
 
@@ -285,6 +287,8 @@ Meteor.methods({
 			var k = "0zDUgX3pZHGBRLK9B9KwPhS52ugr4LpeGw7Fk0lt01s";
 			var url = "https://api.datamarket.azure.com/Bing/Search/v1/SpellingSuggestions?Query=%27" + answer + "%27&$format=JSON";
 			var s = HTTP.call("GET", url, {auth: k + ":" + k});
+			if (s.data.d.results[0].Value == undefined)
+				return false;
 			var spellCheckedAnswer = s.data.d.results[0].Value;
 			spellCheckedAnswer = spellCheckedAnswer.replace(regex, "");
 			spellCheckedAnswer = spellCheckedAnswer.replace(regex2, "");
@@ -314,6 +318,7 @@ Meteor.methods({
 			//correct = true;
 			Rooms.update({_id: gameid}, {
 					$set:{
+							currentState: 6,
 							currentPlayerAnswer: answer,
 							currentAnswerCorrect: true,
 							correctAnswer: Rooms.findOne({_id: gameid}).activeClue.answer[0]
@@ -407,7 +412,7 @@ Meteor.methods({
 
 				Rooms.update({_id: Meteor.user().currentRoom}, {
 					$set: {
-						currentState: 3,
+						currentState: 6,
 						correctAnswer: Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.answer[0]
 						},
 					$inc: {cluesDone: 1}
@@ -663,6 +668,7 @@ Meteor.methods({
 
 
 	playerCleanup: function() {
+		this.unblock();
 		var now = new Date().getTime();
 		var players = Meteor.users.find({});
 		players.forEach(function (player) {
@@ -728,7 +734,6 @@ Meteor.methods({
 				Rooms.update({_id: room}, 
 					{$inc: {roomplayers: -1}
 					 }, function() {
-					 	console.log("hi");
 					 	Meteor.users.update({_id: userId}, {currentRoom: null, playerSlot: null});
 					 }
 					);
@@ -740,7 +745,6 @@ Meteor.methods({
 				}
 
 				else {
-					console.log("RMd");
 					Meteor.users.remove({_id: userId});
 				}
 
@@ -748,13 +752,14 @@ Meteor.methods({
 		});
 	},
 
-	reportClue: function(catindx, q, userAnswer) {
+	reportClue: function(catindx, q, userAnswer, cat) {
 		var now = new Date();
 		Reports.insert({
 			date: now, 
 			catIndex: catindx,
 			q: q,
-			userAnswer: userAnswer
+			userAnswer: userAnswer,
+			category: cat
 		});
 	}
 

@@ -1,6 +1,7 @@
 var han2dle = "HH";
 var submitted = false;
 
+
 Template.cluescreen.helpers({
 	activeClue: function() {
 		return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.question;
@@ -33,7 +34,7 @@ Template.cluescreen.helpers({
 	},
 
 	currentClueCategory: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
+		if (Session.get("gamestate") == 2) {
 			return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.category;
 		}
 		else {
@@ -42,7 +43,7 @@ Template.cluescreen.helpers({
 	},
 
 	moneyDisplay: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
+		if (Session.get("gamestate") == 2) {
 			return '<div class="money-display">$' + Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.worth + '</div>';
 		}
 		else {
@@ -89,21 +90,21 @@ Template.cluescreen.helpers({
 	},
 
 	clueActiveTimer: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4) {
+		if (Session.get("gamestate") == 4) {
 			return ":0" + Session.get("activeTime");
 		}
 		else return "";
 	},
 
 	lightup: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4) {
+		if (Session.get("gamestate") == 4) {
 			return "lightup";
 		}
 		else return "";
 	},
 
 	currentClueComments: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 2) {
+		if (Session.get("gamestate") == 2) {
 			return Rooms.findOne({_id: Meteor.user().currentRoom}).activeClue.comments;
 		}
 		else {
@@ -117,7 +118,7 @@ Template.cluescreen.events({
 	"click .reportspan": function(event) {
 		event.preventDefault();
 		$(".reportspan").html("<span class='report' style='color: #51CA51'> Thanks!</span>");
-		Meteor.call("reportClue", Session.get("lastactiveindex"), Session.get("lastactivequestion"), Session.get("lastanswer"));
+		Meteor.call("reportClue", Session.get("lastactiveindex"), Session.get("lastactivequestion"), Session.get("lastanswer"), Session.get("lastactivecategory"));
 
 	},
 
@@ -160,7 +161,7 @@ Template.cluescreen.events({
 
 	"click #buzzer": function(event) {
 		event.preventDefault();
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 4)
+		if (Session.get("gamestate") == 4)
 			Meteor.call("buzzIn", function(err, result) {
 				if (result) {
 					Session.set("answering", true);
@@ -179,7 +180,7 @@ Template.cluescreen.events({
 				}
 
 			});
-		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 3) {
+		else if (Session.get("gamestate") == 3) {
 			var hideTime = Session.get("buzzTime");
 			Meteor.clearInterval(j);
 			hideTime += 200;

@@ -1,7 +1,7 @@
 Template.board.helpers({
 
 	clueHide: function(cat, clue) {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 0)
+		if (Session.get("gamestate") == 0)
 			return "";
 
 		else if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].clues[clue].selected) {
@@ -31,40 +31,39 @@ Template.board.helpers({
 	},
 
 	disable: function(cat, clue) {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState != 1 || Rooms.findOne().activePlayer != Meteor.user()._id)
+		if (Session.get("gamestate") != 1 || Rooms.findOne().activePlayer != Meteor.user()._id)
 			return "disabled";
 		else if (Rooms.findOne({_id: Meteor.user().currentRoom}).clues[cat].clues[clue].selected)
 			return "disabled";
 		else return "";
 	},
 
-	clicker: function() {
-		var counter = 0;
-		var clicktimer = Meteor.setInterval(function() {
-			if (Meteor.user().currentRoom == null)
-				return;
-			console.log("AA4A");
-			counter++;
-			if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId()) {
-				if (counter == 6) {
-					for (i = 0; i < 5; i++) {
-						for (j = 0; j < 4; j++) {
-							if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[i].clues[j].selected) {
-								var string = "#cat" + i + "clue" + j;
-								$(string).click();
-								counter = 0;
-								Meteor.clearInterval(clicktimer);
-								return;
-							}
-						}
-					}
-				}
-			}
-		}, 1000);
-	},
+	// clicker: function() {
+	// 	var counter = 0;
+	// 	var clicktimer = Meteor.setInterval(function() {
+	// 		if (Meteor.user().currentRoom == null)
+	// 			return;
+	// 		counter++;
+	// 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId()) {
+	// 			if (counter == 6) {
+	// 				for (i = 0; i < 5; i++) {
+	// 					for (j = 0; j < 4; j++) {
+	// 						if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[i].clues[j].selected) {
+	// 							var string = "#cat" + i + "clue" + j;
+	// 							$(string).click();
+	// 							counter = 0;
+	// 							Meteor.clearInterval(clicktimer);
+	// 							return;
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}, 1000);
+	// },
 
 	activePlayer: function() {
-		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId())
+		if (Session.get("gamestate") == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId())
 			return true;
 		else
 			return false;

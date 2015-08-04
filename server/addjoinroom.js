@@ -37,6 +37,7 @@ Meteor.methods({
 		for (var i = 0; i < CATEGORIES_PER_GAME; i++) {
 			var c = Clues.find().fetch()[randoms[i]];
 			clueArray.push({
+				index: randoms[i],
 				category: c.category,
 				comments: c.comments,
 				clues: [{
@@ -187,6 +188,8 @@ Meteor.methods({
 
 		for (var i = 0; i < CATEGORIES_PER_GAME; i++) {
 			clueArray.push({
+				index: randoms[i],
+				comments: Clues.find().fetch()[randoms[i]].comments,
 				category: Clues.find().fetch()[randoms[i]].category,
 				clues: [{
 					question: Clues.find().fetch()[randoms[i]].clues[0].question,

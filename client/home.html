@@ -1,5 +1,6 @@
 <template name = "home">
 
+
 	{{#unless currentUser}}
 		<div class="container">
 			<h1>J-PARTY</h1>
@@ -7,7 +8,11 @@
 				<input type = "text" name="nickname" class="form-control" placeholder="Enter your nickname" maxlength="14">
 				<button type="submit" class="btn btn-default">Go</button>
 			</form>
+			<hr>
 		</div>
+
+	{{> yield "footer"}}
+
 	{{else}}
 		{{redir}}
 	{{/unless}}

@@ -4,6 +4,7 @@
 
 {{else}}
 	{{#if currentUser}}
+	<body>
 		<div class="container ss">
 			<div class="jumbotron">
 				<h2 class="welcome">Welcome {{username}}!</h2>
@@ -82,7 +83,10 @@
 				</div>
 			</div>
 
+			<hr>
 		</div>
+	</body>
+		{{> yield "footer"}}
 
 	{{else}}
 		{{redir}}

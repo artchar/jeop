@@ -7,6 +7,10 @@
 	margin-bottom: 0.5em;
 }
 
+.footbutton:hover {
+	cursor:pointer;
+}
+
 
 .btn-money {
 	font-size: 2em;

@@ -260,6 +260,7 @@ Meteor.methods({
 	},
 
 	spellCheck: function(answer) {
+		this.unblock();
 		var gameid = Meteor.user().currentRoom;
 		var playerid = Meteor.userId();
 		var correct = false;
@@ -670,85 +671,86 @@ Meteor.methods({
 	playerCleanup: function() {
 		this.unblock();
 		var now = new Date().getTime();
-		var players = Meteor.users.find({});
+		var diff = now - 10000;
+		var players = Meteor.users.find({lastPing: {$lte: diff}});
 		players.forEach(function (player) {
-			if (now - player.lastPing > 15500 && !player.loggedIn) {
-				console.log(player.username);
-				var gameId = room;
-				var userId = player._id;
+			console.log(player.username);
 
-				if (player.currentRoom != null || player.currentRoom != undefined) {
-					var room = player.currentRoom;
-					console.log("asdfaidsa");
-					if (Rooms.findOne({_id: room}) == undefined)
-						return;
-					if (player._id == Rooms.findOne({_id: room}).ownerId){
-						if (Rooms.findOne({_id: room}).roomplayers > 1) {
-							Rooms.update({_id: room}, 
-								{$set: {roomOwner: Rooms.findOne(room).players[1].player,
-										ownerId: Rooms.findOne(room).players[1].playerid}});
+			var room = player.currentRoom;
+			var gameId = room;
+			var userId = player._id;
 
-						}
+			if (player.currentRoom != null && Rooms.findOne({_id: room})) {
+				// if (Rooms.findOne({_id: room}) == undefined)
+				// 	return;
+				console.log('hi');
+				if (player._id == Rooms.findOne({_id: room}).ownerId){
+					if (Rooms.findOne({_id: room}).roomplayers > 1) {
+						Rooms.update({_id: room}, 
+							{$set: {roomOwner: Rooms.findOne(room).players[1].player,
+									ownerId: Rooms.findOne(room).players[1].playerid}});
+
 					}
-
-					if (player._id == Rooms.findOne({_id: room}).activePlayer) {
-						if (Rooms.findOne({_id: room}).roomplayers > 1) {
-							Rooms.update({_id: room}, 
-								{$set: {activePlayer: Rooms.findOne(room).players[1].playerid}});
-
-						}
-					}
-
-					if (player._id == Rooms.findOne({_id: room}).answeringPlayer) {
-						if (Rooms.findOne({_id: room}).roomplayers > 1) {
-							Rooms.update({_id: room}, {
-								$set: {
-										currentState: 4,
-										answeringPlayer: null,
-										currentPlayerAnswer: null,
-										currentAnswerCorrect: null,
-										correctAnswer: null
-								   	  }
-							});
-
-						}
-					}
-
-
-				var query = "players.0.readyStatus";
-				var setReady = {};
-				setReady[query] = true;
-				var p = Rooms.findOne({_id: room}).roomplayers;
-				var slot = player.playerSlot;
-
-				for (var i = slot+1; i < p; i++) {
-					Meteor.users.update({_id: Rooms.findOne({_id: gameId}).players[i].playerid},
-						{$inc: {playerSlot: -1}});
 				}
 
-				Rooms.update({_id: room}, 
-					{$pull: {players: {playerid: userId},
-					 }
-					});
+				if (player._id == Rooms.findOne({_id: room}).activePlayer) {
+					if (Rooms.findOne({_id: room}).roomplayers > 1) {
+						Rooms.update({_id: room}, 
+							{$set: {activePlayer: Rooms.findOne(room).players[1].playerid}});
 
-				Rooms.update({_id: room}, 
-					{$inc: {roomplayers: -1}
-					 }, function() {
-					 	Meteor.users.update({_id: userId}, {currentRoom: null, playerSlot: null});
-					 }
-					);
-				
-				Rooms.update({_id: room}, 
-					{$set: setReady
-					 }
-					);
+					}
 				}
 
-				else {
-					Meteor.users.remove({_id: userId});
+				if (player._id == Rooms.findOne({_id: room}).answeringPlayer) {
+					if (Rooms.findOne({_id: room}).roomplayers > 1) {
+						Rooms.update({_id: room}, {
+							$set: {
+									currentState: 4,
+									answeringPlayer: null,
+									currentPlayerAnswer: null,
+									currentAnswerCorrect: null,
+									correctAnswer: null
+							   	  }
+						});
+
+					}
 				}
 
+
+			var query = "players.0.readyStatus";
+			var setReady = {};
+			setReady[query] = true;
+			var p = Rooms.findOne({_id: room}).roomplayers;
+			var slot = player.playerSlot;
+
+			for (var i = slot+1; i < p; i++) {
+				Meteor.users.update({_id: Rooms.findOne({_id: gameId}).players[i].playerid},
+					{$inc: {playerSlot: -1}});
 			}
+
+			Rooms.update({_id: room}, 
+				{$pull: {players: {playerid: userId},
+				 }
+				});
+
+			Rooms.update({_id: room}, 
+				{$inc: {roomplayers: -1}
+				 }, function() {
+				 	Meteor.users.update({_id: userId}, {currentRoom: null, playerSlot: null, lastPing: 3000});
+				 }
+				);
+			
+			Rooms.update({_id: room}, 
+				{$set: setReady
+				 }
+				);
+			}
+
+			else {
+				Meteor.users.remove({_id: userId});
+			}
+
+		
 		});
 	},
 

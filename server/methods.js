@@ -285,7 +285,7 @@ Meteor.methods({
 			return true;
 		else {
 			console.log("GETted!");
-			var k = "0zDUgX3pZHGBRLK9B9KwPhS52ugr4LpeGw7Fk0lt01s";
+			var k = "key";
 			var url = "https://api.datamarket.azure.com/Bing/Search/v1/SpellingSuggestions?Query=%27" + answer + "%27&$format=JSON";
 			var s = HTTP.call("GET", url, {auth: k + ":" + k});
 			if (s.data.d.results[0].Value == undefined)

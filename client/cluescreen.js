@@ -1,5 +1,3 @@
-var han2dle = "HH";
-var submitted = false;
 
 
 Template.cluescreen.helpers({
@@ -200,7 +198,6 @@ Template.cluescreen.onCreated(function() {
 });
 
 Template.cluescreen.onDestroyed(function() {
-	console.log("peace");
 	observeHandle.stop();
 })
 

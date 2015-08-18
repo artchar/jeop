@@ -1,7 +1,9 @@
+// access to current user's profile
 Meteor.publish("user", function() {
 	return Meteor.users.find({_id: this.userId});
 })
 
+// see rooms on rooms page
 Meteor.publish("rooms", function() {
 	return Rooms.find({currentState: 0}, {
 		fields: {
@@ -11,9 +13,8 @@ Meteor.publish("rooms", function() {
 	});
 })
 
+// access to current room's data
 Meteor.publish("currentRoom", function(id) {
-	// for (i = 0; i < Rooms.findOne({_id: id}).players.length; i++) {
-	// 	if (this.userId == Rooms.findOne({_id: id}).players[i].playerid) {
 	return Rooms.find({_id: id}, {
 		fields: {
 			"activeClue.index": true,
@@ -40,8 +41,4 @@ Meteor.publish("currentRoom", function(id) {
 			cluesDone: true
 		}
 	});
-		// 	}
-		// }
-
-	//return Rooms.find({_id: null});
-	});
+});

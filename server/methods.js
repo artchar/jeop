@@ -1,8 +1,19 @@
 
+/* states
+
+0: pregame
+1: player choosing a clue
+2: money display, disable buttons, 2 seconds
+3: clue display, 4 seconds
+4: players buzzing in, 5 seconds
+5: player answering, 5 seconds, back to state 1
+6: checking answer
+7: if all clues selected, end game
+*/
+
+
 
 function resetIncorrect(gameid, playerid) {
-
-
 	for (var i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
 		var qmoney = "players." + i + ".incorrect";
 		var updateMoney = {};
@@ -16,7 +27,6 @@ function resetIncorrect(gameid, playerid) {
 function endGame(gameid, playerid) {
 	var max = -999999;
 
-	//var playerid = Meteor.userId();
 
 	for ( var i = 0; i < Rooms.findOne({_id: gameid}).roomplayers; i++) {
 		if (Rooms.findOne({_id: gameid}).players[i].money > max){
@@ -235,19 +245,12 @@ Meteor.methods({
 	//Enter state 5
 	buzzIn: function() {
 
-		// Meteor.clearInterval(answerTimerHandle);
-		// Meteor.clearInterval(clueActiveHandle);
-		// Meteor.clearInterval(buzzTimerHandle);
 
 		var gameid = Meteor.user().currentRoom;
 
 		var activeTime = Rooms.findOne({_id: gameid}).clueActiveTimer;
 		if (Rooms.findOne({_id: Meteor.user().currentRoom}) == null || Rooms.findOne({_id: gameid}).currentState !=4 )
 			return false;
-
-	//	console.log(Rooms.findOne({_id: gameid}).clueActiveTimerIndex);
-	//	console.log(Timers.gameid);
-	//	Meteor.clearTimeout(Timers.gameid);
 
 		Rooms.update({_id: Meteor.user().currentRoom},
 			{$set: {
@@ -316,7 +319,6 @@ Meteor.methods({
 
 		// Correct
 		if(correct) {
-			//correct = true;
 			Rooms.update({_id: gameid}, {
 					$set:{
 							currentState: 6,
@@ -644,18 +646,6 @@ Meteor.methods({
 			{$set: setReady
 			 }
 			);
-		// var handle2 = Meteor.setInterval(function() {
-		// 	if (Rooms.findOne({_id: gameId}).roomplayers != p) {
-
-		// 		Meteor.users.update({_id: userId},
-		// 			{$set: {currentRoom: null, playerSlot: null}
-		// 		});
-		// 		Meteor.clearInterval(handle2);
-		// 	}
-		// 	else{
-		// 		return;
-		// 	}
-		// }, 5);
 
 	},
 
@@ -681,8 +671,6 @@ Meteor.methods({
 			var userId = player._id;
 
 			if (player.currentRoom != null && Rooms.findOne({_id: room})) {
-				// if (Rooms.findOne({_id: room}) == undefined)
-				// 	return;
 				console.log('hi');
 				if (player._id == Rooms.findOne({_id: room}).ownerId){
 					if (Rooms.findOne({_id: room}).roomplayers > 1) {
@@ -766,16 +754,3 @@ Meteor.methods({
 	}
 
 });
-
-/* states
-
-0: pregame
-1: player choosing a clue
-2: money display, disable buttons, 2 seconds
-3: clue display, 4 seconds
-4: players buzzing in, 5 seconds
-5: player answering, 5 seconds, back to state 1
-6: checking answer
-7: if all clues selected, end game
-*/
-

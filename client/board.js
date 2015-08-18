@@ -38,29 +38,6 @@ Template.board.helpers({
 		else return "";
 	},
 
-	// clicker: function() {
-	// 	var counter = 0;
-	// 	var clicktimer = Meteor.setInterval(function() {
-	// 		if (Meteor.user().currentRoom == null)
-	// 			return;
-	// 		counter++;
-	// 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId()) {
-	// 			if (counter == 6) {
-	// 				for (i = 0; i < 5; i++) {
-	// 					for (j = 0; j < 4; j++) {
-	// 						if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[i].clues[j].selected) {
-	// 							var string = "#cat" + i + "clue" + j;
-	// 							$(string).click();
-	// 							counter = 0;
-	// 							Meteor.clearInterval(clicktimer);
-	// 							return;
-	// 						}
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}, 1000);
-	// },
 
 	activePlayer: function() {
 		if (Session.get("gamestate") == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId())
@@ -85,46 +62,12 @@ Template.board.events({
 		var cat = event.currentTarget.id[3];
 		var clue = event.currentTarget.id[8];
 		Meteor.call("clickClue", cat, clue);
-		// Meteor.setTimeout(function() {
-		// 	$(".btn-money").removeClass('disabled');
-		// }, 900);
 	}
 })
 
 Tracker.autorun(function() {
 	Meteor.subscribe("user");
 })
-
-// Meteor.setInterval(function() {
-// 	var counter = 0;
-// 	var clicktimer = Meteor.setInterval(function() {
-// 		if (Meteor.user().currentRoom == undefined){
-// 			Meteor.clearInterval(clicktimer);
-// 			return;
-// 		}
-// 		counter++;
-// 		if (Rooms.findOne({_id: Meteor.user().currentRoom}).currentState == 1 && Rooms.findOne({_id: Meteor.user().currentRoom}).activePlayer == Meteor.userId()) {
-// 			if (counter == 6) {
-// 				for (i = 0; i < 5; i++) {
-// 					for (j = 0; j < 4; j++) {
-// 						if (!Rooms.findOne({_id: Meteor.user().currentRoom}).clues[i].clues[j].selected) {
-// 							var string = "#cat" + i + "clue" + j;
-// 							$(string).click();
-// 							counter = 0;
-// 							Meteor.clearInterval(clicktimer);
-// 							return;
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}, 1000);
-// }, 10000);
-
-
-
-
-
 
 
 /* states

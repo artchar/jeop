@@ -1,8 +1,5 @@
-// EasySecurity.config({
-//   ignoredMethods: ['roomCleanup', 'ping']
-// });
 
-Timers = {};
+// auto calling methods to clean up games and users that disconnect
 
 Meteor.setInterval(function() {
 	Meteor.call("roomCleanup");

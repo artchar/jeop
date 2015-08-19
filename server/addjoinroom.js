@@ -126,30 +126,6 @@ Meteor.methods({
 			{$set: {currentRoom: roomId,
 					playerSlot: 0}});
 
-		// var answerTimerHandle = Meteor.setInterval(function() {
-		// 	if (Rooms.findOne({_id: roomId}).currentState == 5) {
-		// 		Rooms.update({_id: roomId},
-		// 			{$inc: {
-		// 				answerTimer: -1
-		// 				}
-		// 			});
-		// 	}
-		// }, 1000);
-
-		// var clueActiveHandle = Meteor.setInterval(function() {
-		// 	if (Rooms.findOne({_id: roomId}).currentState == 4) {
-		// 		Rooms.update({_id: roomId},
-		// 			{$inc: {
-		// 				clueActiveTimer: -1
-		// 				}
-		// 			});
-		// 	}
-		// }, 1000);
-
-		// var answerTimerHandle = Meteor.setInterval(function() {
-			
-		// }, 1000);
-
 		return roomId;
 	},
 
@@ -246,7 +222,8 @@ Meteor.methods({
 
 			}
 		});
-
+		
+		// This resets the game fields
 		for (var i=0; i < Rooms.findOne({_id: Meteor.user().currentRoom}).roomplayers; i++) {
 			var a = {};
 			var q1 = "players." + i + ".isWinner";
